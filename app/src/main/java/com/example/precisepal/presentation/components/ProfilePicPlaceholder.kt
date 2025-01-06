@@ -32,7 +32,7 @@ fun ProfilePicPlaceholder(
                 width = boarderWidth, brush = Brush.linearGradient(
                     listOf(Color.Gray, Color.Black)
                 ), shape = CircleShape
-            )
+            ),
     ) {
         AsyncImage(
             model = imageReq,
