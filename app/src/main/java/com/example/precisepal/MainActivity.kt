@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             PrecisePalTheme {
                 //here we are calculating the screen size, depends up on the device
                 val windowSizeClass = calculateWindowSizeClass(activity = this)
-                //SignInScreen(windowSize = windowSizeClass.widthSizeClass)
+//                SignInScreen(windowSize = windowSizeClass.widthSizeClass)
                 DashboardScreen()
             }
         }

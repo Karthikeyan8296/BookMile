@@ -17,6 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,13 +32,28 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastCbrt
 import com.example.precisepal.R
 import com.example.precisepal.presentation.components.AnonymouslySignInButton
 import com.example.precisepal.presentation.components.GoogleSignInButton
+import com.example.precisepal.presentation.components.MeasureMateDialog
 
 
 @Composable
 fun SignInScreen(windowSize: WindowWidthSizeClass) {
+
+    //Dialog
+    var isDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    MeasureMateDialog(
+        isOpen = isDialogOpen,
+        onDismiss = { isDialogOpen = false },
+        onConfirm = {isDialogOpen = false},
+        title = "welcome back boobs",
+        body = "yah my body"
+    )
+
     when (windowSize) {
         //Compact is the normal mobile screen view, so if normal screen view na.. use this UI
         WindowWidthSizeClass.Compact -> {
@@ -69,11 +88,11 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                GoogleSignInButton(loadingState = false, modifier = Modifier, onButtonClick = {})
+                GoogleSignInButton(loadingState = false, onButtonClick = {})
                 AnonymouslySignInButton(
                     loadingState = false,
                     modifier = Modifier,
-                    onButtonClick = {})
+                    onButtonClick = {isDialogOpen = true})
             }
         }
         //Else use this UI
@@ -122,12 +141,11 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
                 ) {
                     GoogleSignInButton(
                         loadingState = false,
-                        modifier = Modifier,
                         onButtonClick = {})
                     AnonymouslySignInButton(
                         loadingState = false,
                         modifier = Modifier,
-                        onButtonClick = {})
+                        onButtonClick = {isDialogOpen = true})
                 }
             }
         }

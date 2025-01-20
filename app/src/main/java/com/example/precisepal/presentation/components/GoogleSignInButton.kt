@@ -24,7 +24,6 @@ import com.example.precisepal.R
 
 @Composable
 fun GoogleSignInButton(
-    modifier: Modifier,
     loadingState: Boolean = false,
     primaryText: String = "Sign in with Google",
     secondaryText: String = "Processing...",
@@ -61,5 +60,5 @@ fun GoogleSignInButton(
 @Preview
 @Composable
 private fun Preview() {
-    GoogleSignInButton(onButtonClick = {}, modifier = Modifier, loadingState = false)
+    GoogleSignInButton(onButtonClick = {}, loadingState = false)
 }
