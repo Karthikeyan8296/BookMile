@@ -199,7 +199,6 @@ private fun TimeRangeSelectionButton(
     modifier: Modifier = Modifier,
     label: String,
     labelTextStyle: TextStyle,
-//    textColor: Color,
     backgroundColor: Color,
     onClick: () -> Unit,
 ) {
