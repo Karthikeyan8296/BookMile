@@ -12,31 +12,34 @@ fun MeasureMateDialog(
     modifier: Modifier = Modifier,
     isOpen: Boolean,
     title: String,
-    body: String,
+    body: @Composable () -> Unit,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    confirmButtonText: String = "Yes",
-    dismissButtonText: String = "Cancel",
+    confirmButtonText: String?,
+    dismissButtonText: String?
 ) {
     if (isOpen) {
         AlertDialog(
             modifier = modifier,
             title = { Text(text = title) },
-            text = { Text(text = body) },
+            text = body,
             onDismissRequest = { onDismiss() },
             confirmButton = {
-                TextButton(onClick = { onConfirm() }) {
-                    Text(text = confirmButtonText)
+                if(confirmButtonText != null){
+                    TextButton(onClick = { onConfirm() }) {
+                        Text(text = confirmButtonText)
+                    }
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onConfirm() }) {
-                    Text(text = dismissButtonText)
+                if(dismissButtonText != null){
+                    TextButton(onClick = { onDismiss() }) {
+                        Text(text = dismissButtonText)
+                    }
                 }
             },
         )
     }
-
 }
 
 @Preview
@@ -47,7 +50,9 @@ private fun MatesDialogPreview() {
         onDismiss = {},
         onConfirm = {},
         title = "welcome back boobs",
-        body = "yah my body"
+        body = { Text("Yah my body") },
+        confirmButtonText = "yeah",
+        dismissButtonText = "nah"
     )
 
 }

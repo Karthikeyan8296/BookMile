@@ -51,7 +51,9 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
         onDismiss = { isDialogOpen = false },
         onConfirm = {isDialogOpen = false},
         title = "welcome back boobs",
-        body = "yah my body"
+        body = { Text("yah my body") },
+        confirmButtonText = "Yes",
+        dismissButtonText = "Cancel"
     )
 
     when (windowSize) {

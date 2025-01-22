@@ -72,11 +72,11 @@ fun DashboardScreen() {
 
     }
     MeasureMateDialog(
-        body = "are you sure want to sign out?",
+        body = { Text("are you sure want to sign out?") },
         title = "Sign Out",
         isOpen = isDialogSignOut,
-        onDismiss = {isDialogSignOut = false},
-        onConfirm = {isDialogSignOut = false},
+        onDismiss = { isDialogSignOut = false },
+        onConfirm = { isDialogSignOut = false },
         confirmButtonText = "Yes",
         dismissButtonText = "No"
     )
@@ -85,11 +85,11 @@ fun DashboardScreen() {
         mutableStateOf(false)
     }
     ProfileBottomSheet(
-        onDismiss = {isProfileSheetOpen = false}, isOpen = isProfileSheetOpen,
+        onDismiss = { isProfileSheetOpen = false }, isOpen = isProfileSheetOpen,
         sheetState = rememberModalBottomSheetState(),
         buttonPrimaryText = "Sign out from Google",
         buttonLoadingState = false,
-        onButtonClick = {isDialogSignOut = true},
+        onButtonClick = { isDialogSignOut = true },
         userInstance = user
     )
 
@@ -105,7 +105,7 @@ fun DashboardScreen() {
         ) {
             //Dashboard header
             DashboardTopBar(
-                onProfileClicks = { isProfileSheetOpen = true},
+                onProfileClicks = { isProfileSheetOpen = true },
                 profilePicURL = "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg"
             )
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import com.example.precisepal.presentation.addItems.AddItemsScreen
 import com.example.precisepal.presentation.dashboard.DashboardScreen
 import com.example.precisepal.presentation.dashboard.DashboardTopBar
 import com.example.precisepal.presentation.signIn.SignInScreen
@@ -31,7 +32,8 @@ class MainActivity : ComponentActivity() {
                 //here we are calculating the screen size, depends up on the device
                 val windowSizeClass = calculateWindowSizeClass(activity = this)
 //                SignInScreen(windowSize = windowSizeClass.widthSizeClass)
-                DashboardScreen()
+//                DashboardScreen()
+                AddItemsScreen()
             }
         }
     }
