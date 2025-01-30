@@ -46,6 +46,7 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
     var isDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
+
     MeasureMateDialog(
         isOpen = isDialogOpen,
         onDismiss = { isDialogOpen = false },
@@ -162,6 +163,7 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
 private fun Preview() {
     SignInScreen(
         //Medium is used to check the screen in landscape mode
-        windowSize = WindowWidthSizeClass.Medium
+        //Compact is used to check the screen in portrait mode
+        windowSize = WindowWidthSizeClass.Compact
     )
 }

@@ -1,7 +1,5 @@
 package com.example.precisepal.presentation.details
 
-import android.content.res.Configuration
-import androidx.collection.emptyLongSet
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.TimeRange
+import com.example.precisepal.presentation.components.LineGraph
 import com.example.precisepal.presentation.components.MeasureMateDialog
 import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
 import kotlinx.coroutines.launch
@@ -84,8 +81,8 @@ fun DetailsScreen(modifier: Modifier = Modifier) {
             }
         })
 
-    var SelectedTimeRange by rememberSaveable {
-        mutableStateOf(TimeRange.ALL_TIME)
+    var selectedTimeRange by rememberSaveable {
+        mutableStateOf(TimeRange.LAST_7_DAYS)
     }
 
     //Main Layout
@@ -99,7 +96,7 @@ fun DetailsScreen(modifier: Modifier = Modifier) {
             onBackIconClick = {},
             onUnitIconClick = { isBottomSheetOpen = true },
             bodyPartInstance = BodyPart(
-                name = "boobs",
+                name = "Shoulder",
                 measuringUnit = "cm",
                 isActive = true,
                 bodyPartId = "xxx",
@@ -107,8 +104,8 @@ fun DetailsScreen(modifier: Modifier = Modifier) {
             )
         )
         ChartTimeRangeButton(
-            onButtonClick = { SelectedTimeRange = it },
-            selectedTimeRange = SelectedTimeRange
+            onButtonClick = { selectedTimeRange = it },
+            selectedTimeRange = selectedTimeRange
         )
     }
 }
@@ -150,10 +147,10 @@ fun DetailsTopBar(
     )
 }
 
+
 //this is the outer layout of that button
 @Composable
 private fun ChartTimeRangeButton(
-    modifier: Modifier = Modifier,
     selectedTimeRange: TimeRange,
     onButtonClick: (TimeRange) -> Unit,
 ) {
@@ -196,7 +193,6 @@ private fun ChartTimeRangeButton(
 //TimeRangeSelectionButton
 @Composable
 private fun TimeRangeSelectionButton(
-    modifier: Modifier = Modifier,
     label: String,
     labelTextStyle: TextStyle,
     backgroundColor: Color,
