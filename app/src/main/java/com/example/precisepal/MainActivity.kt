@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 //                SignInScreen(windowSize = windowSizeClass.widthSizeClass)
 //                DashboardScreen()
 //                AddItemsScreen()
-                DetailsScreen()
+                DetailsScreen(windowSizeClass = windowSizeClass.widthSizeClass)
             }
         }
     }

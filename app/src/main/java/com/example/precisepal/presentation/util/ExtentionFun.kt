@@ -2,7 +2,11 @@ package com.example.precisepal.presentation.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -38,5 +42,34 @@ fun LocalDate?.changeLocalDateToFullDate(defaultValue: LocalDate = LocalDate.now
             ?: defaultValue.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
     } catch (e: Exception) {
         defaultValue.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+    }
+}
+
+//converting the millis dates to proper date string
+@RequiresApi(Build.VERSION_CODES.O)
+fun Long?.changeMillisToGraphDate(): LocalDate {
+    return try {
+        this?.let {
+            Instant
+                .ofEpochMilli(it)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        } ?: LocalDate.now()
+    } catch (e: Exception) {
+        LocalDate.now()
+    }
+}
+
+//not allowing user to select the past dates
+//we are getting that interface
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+object pastOrPresentSelectableDates: SelectableDates{
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        return utcTimeMillis <= System.currentTimeMillis()
+    }
+
+    override fun isSelectableYear(year: Int): Boolean {
+        return year <= LocalDate.now().year
     }
 }
