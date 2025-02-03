@@ -1,5 +1,8 @@
 package com.example.precisepal.presentation.details
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,16 +11,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,13 +50,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.BodyPartValues
 import com.example.precisepal.domain.model.TimeRange
 import com.example.precisepal.presentation.components.LineGraph
 import com.example.precisepal.presentation.components.MeasureMateDialog
 import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
+import com.example.precisepal.presentation.util.changeLocalDateToFullDate
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier) {
@@ -103,12 +118,42 @@ fun DetailsScreen(modifier: Modifier = Modifier) {
                 latestValue = null
             )
         )
+        //toggle button component
         ChartTimeRangeButton(
             onButtonClick = { selectedTimeRange = it },
             selectedTimeRange = selectedTimeRange
         )
+        Spacer(Modifier.height(16.dp))
+        //graph component
+        LineGraph(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(ratio = 2 / 1f)
+                .padding(16.dp),
+            bodyPartValueInstance = dummyList
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HistorySection(
+            bodyPartInstance = dummyList,
+            onDeleteIconClick = {},
+            measuringUnitCode = "cm"
+        )
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+val dummyList = listOf(
+    BodyPartValues(value = 71.5f, date = LocalDate.of(2023, 7, 1)),
+    BodyPartValues(value = 72.3f, date = LocalDate.of(2023, 7, 2)),
+    BodyPartValues(value = 70.8f, date = LocalDate.of(2023, 7, 3)),
+    BodyPartValues(value = 69.4f, date = LocalDate.of(2023, 8, 4)),
+    BodyPartValues(value = 68.9f, date = LocalDate.of(2023, 8, 5)),
+    BodyPartValues(value = 73.2f, date = LocalDate.of(2023, 9, 6)),
+    BodyPartValues(value = 71.7f, date = LocalDate.of(2023, 9, 7)),
+    BodyPartValues(value = 70.1f, date = LocalDate.of(2023, 9, 8)),
+    BodyPartValues(value = 69.8f, date = LocalDate.of(2023, 10, 9)),
+    BodyPartValues(value = 72.5f, date = LocalDate.of(2023, 10, 10))
+)
 
 //Header component
 @OptIn(ExperimentalMaterial3Api::class)
@@ -220,8 +265,118 @@ private fun TimeRangeSelectionButton(
     }
 }
 
-@Preview(showSystemUi = true)
+//History lazy component
+@OptIn(ExperimentalFoundationApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun HistorySection(
+    bodyPartInstance: List<BodyPartValues>,
+    measuringUnitCode: String?,
+    onDeleteIconClick: () -> Unit,
+) {
+    LazyColumn {
+        //it will take the groups of months
+        val grouped = bodyPartInstance.groupBy { it.date.month }
+        
+        item {
+            Text(
+                text = "History", style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 12.dp)
+            )
+        }
+        grouped.forEach{(month, bodyPartInstance) ->
+            //for months display
+            stickyHeader {
+                Text(
+                    text = month.name, style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 8.dp)
+                )
+            }
+            items(bodyPartInstance) { bodyPartInstance ->
+                HistoryCard(
+                    bodyPartInstance = bodyPartInstance,
+                    measuringUnitCode = measuringUnitCode,
+                    onDeleteIconClick = onDeleteIconClick
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
+//history card
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun HistoryCard(
+    modifier: Modifier = Modifier,
+    bodyPartInstance: BodyPartValues,
+    measuringUnitCode: String?,
+    onDeleteIconClick: () -> Unit,
+) {
+    ElevatedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(imageVector = Icons.Rounded.DateRange, contentDescription = "")
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = bodyPartInstance.date.changeLocalDateToFullDate(),
+                modifier = modifier.weight(8f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = bodyPartInstance.value.toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = measuringUnitCode.toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            IconButton(onClick = {onDeleteIconClick()}) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "")
+            }
+        }
+
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showSystemUi = false)
 @Composable
 private fun DetailsScreenPreview() {
-    DetailsScreen()
+//    DetailsScreen()
+    HistorySection(bodyPartInstance = dummyList, onDeleteIconClick = {}, measuringUnitCode = "cm")
 }
