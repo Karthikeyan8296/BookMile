@@ -82,7 +82,9 @@ import java.time.LocalDate
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
-    windowSizeClass: WindowWidthSizeClass,
+    windowSizeInstance: WindowWidthSizeClass,
+    bodyPartIDInstance: String,
+    onBackClickInstance: () -> Unit,
 ) {
     //Dialog
     var isDeleteDialogOpen by rememberSaveable {
@@ -103,7 +105,8 @@ fun DetailsScreen(
     }
     val preBuildSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    MeasureUnitBottomSheet(preBuildSheetState = preBuildSheetState,
+    MeasureUnitBottomSheet(
+        preBuildSheetState = preBuildSheetState,
         isOpen = isBottomSheetOpen,
         onDismiss = { isBottomSheetOpen = false },
         //this will update the state and close the bottom sheet too!
@@ -113,7 +116,8 @@ fun DetailsScreen(
                     isBottomSheetOpen = false
                 }
             }
-        })
+        }
+    )
 
     var selectedTimeRange by rememberSaveable {
         mutableStateOf(TimeRange.LAST_7_DAYS)
@@ -148,8 +152,15 @@ fun DetailsScreen(
         onDismissReq = { isDatePickerOpen = false },
         state = datePickerState
     )
+    val dummyBodyPart = BodyPart(
+        name = "Shoulder: $bodyPartIDInstance",
+        measuringUnit = "cm",
+        isActive = true,
+        bodyPartId = "xxx",
+        latestValue = null
+    )
 
-    when (windowSizeClass) {
+    when (windowSizeInstance) {
         WindowWidthSizeClass.Compact -> {
             //Screen UI
             Scaffold { contentPadding ->
@@ -170,7 +181,7 @@ fun DetailsScreen(
                         //header
                         DetailsTopBar(
                             onDeleteIconClick = { isDeleteDialogOpen = true },
-                            onBackIconClick = {},
+                            onBackIconClick = { onBackClickInstance() },
                             onUnitIconClick = { isBottomSheetOpen = true },
                             bodyPartInstance = dummyBodyPart
                         )
@@ -297,8 +308,6 @@ fun DetailsScreen(
             }
         }
     }
-
-
 }
 
 
@@ -316,13 +325,6 @@ val dummyList = listOf(
     BodyPartValues(value = 72.5f, date = LocalDate.of(2023, 10, 10))
 )
 
-val dummyBodyPart = BodyPart(
-    name = "Shoulder",
-    measuringUnit = "cm",
-    isActive = true,
-    bodyPartId = "xxx",
-    latestValue = null
-)
 
 //Header component
 @OptIn(ExperimentalMaterial3Api::class)
@@ -563,6 +565,8 @@ fun InputCardHideIcon(
 @PreviewScreenSizes
 @Composable
 private fun DetailsScreenPreview() {
-    DetailsScreen(windowSizeClass = WindowWidthSizeClass.Compact)
-//    HistorySection(bodyPartInstance = dummyList, onDeleteIconClick = {}, measuringUnitCode = "cm")
+    DetailsScreen(
+        windowSizeInstance = WindowWidthSizeClass.Compact,
+        bodyPartIDInstance = "",
+        onBackClickInstance = {})
 }

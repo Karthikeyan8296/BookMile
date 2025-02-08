@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -71,4 +72,9 @@ dependencies {
     implementation(libs.androidx.material3.windowSizeClass)
     //Coil - best version
     implementation("io.coil-kt:coil-compose:2.6.0")
+    //navigation
+    val nav_version = "2.8.6"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+    //kotlin serialization for navigation
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 }

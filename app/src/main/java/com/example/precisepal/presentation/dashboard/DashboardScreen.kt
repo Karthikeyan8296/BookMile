@@ -56,7 +56,11 @@ import com.example.precisepal.presentation.theme.PrecisePalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(
+    onFabClick: () -> Unit,
+    //we are passing string for that body part id
+    onItemCardClicked: (String) -> Unit,
+) {
     //Dummy data!
     val user = User(
         name = "Karthik",
@@ -118,7 +122,7 @@ fun DashboardScreen() {
                 //item {}
                 //bunch of cards can be defined here, with items!
                 items(predefinedBodyPart) { bodyPart ->
-                    ItemCard(bodyPartInstance = bodyPart)
+                    ItemCard(bodyPartInstance = bodyPart, onCardClick = onItemCardClicked)
                 }
             }
         }
@@ -126,7 +130,7 @@ fun DashboardScreen() {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
-            onClick = {}) {
+            onClick = { onFabClick() }) {
             Icon(imageVector = Icons.Rounded.AddCircle, contentDescription = "add icon")
         }
     }
@@ -162,12 +166,13 @@ fun DashboardTopBar(
 //Body component//
 @Composable
 //the bodyPart is called from the domain
-private fun ItemCard(bodyPartInstance: BodyPart) {
+private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 4.dp),
-        onClick = { },
+        //if the body part is not null, then we will call this click fun
+        onClick = { bodyPartInstance.bodyPartId?.let { onCardClick(it) } },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 18.dp),
@@ -215,6 +220,6 @@ private fun ItemCard(bodyPartInstance: BodyPart) {
 @Composable
 fun DashboardScreenPreview() {
     PrecisePalTheme {
-        DashboardScreen()
+        DashboardScreen(onItemCardClicked = {}, onFabClick = {})
     }
 }

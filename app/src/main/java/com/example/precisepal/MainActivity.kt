@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.navigation.compose.rememberNavController
 import com.example.precisepal.presentation.addItems.AddItemsScreen
 import com.example.precisepal.presentation.dashboard.DashboardScreen
 import com.example.precisepal.presentation.dashboard.DashboardTopBar
 import com.example.precisepal.presentation.details.DetailsScreen
+import com.example.precisepal.presentation.navigation.NavGraph
 import com.example.precisepal.presentation.signIn.SignInScreen
 import com.example.precisepal.presentation.theme.PrecisePalTheme
 
@@ -35,10 +37,10 @@ class MainActivity : ComponentActivity() {
             PrecisePalTheme {
                 //here we are calculating the screen size, depends up on the device
                 val windowSizeClass = calculateWindowSizeClass(activity = this)
-//                SignInScreen(windowSize = windowSizeClass.widthSizeClass)
-//                DashboardScreen()
-//                AddItemsScreen()
-                DetailsScreen(windowSizeClass = windowSizeClass.widthSizeClass)
+                //to remember the navigation in the app
+                val navController = rememberNavController()
+                //now our app will start from the navGraph
+                NavGraph(navControllerInstance = navController, windowSize = windowSizeClass)
             }
         }
     }
@@ -47,8 +49,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    PrecisePalTheme {
-        //SignInScreen(windowSize = WindowWidthSizeClass.Compact)
-        DashboardScreen()
-    }
+    PrecisePalTheme {}
 }

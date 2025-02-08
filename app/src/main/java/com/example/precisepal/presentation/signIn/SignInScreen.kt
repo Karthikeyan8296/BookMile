@@ -40,7 +40,7 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 
 @Composable
-fun SignInScreen(windowSize: WindowWidthSizeClass) {
+fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
 
     //Dialog
     var isDialogOpen by rememberSaveable {
@@ -57,7 +57,7 @@ fun SignInScreen(windowSize: WindowWidthSizeClass) {
         dismissButtonText = "Cancel"
     )
 
-    when (windowSize) {
+    when (windowSizeInstance) {
         //Compact is the normal mobile screen view, so if normal screen view na.. use this UI
         WindowWidthSizeClass.Compact -> {
             Column(
@@ -164,6 +164,6 @@ private fun Preview() {
     SignInScreen(
         //Medium is used to check the screen in landscape mode
         //Compact is used to check the screen in portrait mode
-        windowSize = WindowWidthSizeClass.Compact
+        windowSizeInstance = WindowWidthSizeClass.Compact
     )
 }

@@ -7,5 +7,7 @@ plugins {
     //Kotlin Compose library
     alias(libs.plugins.kotlin.compose) apply false
 
+    alias(libs.plugins.kotlinx.serialization) apply false
+
     //this plugins will be initialized in the libs.version file
 }

@@ -54,7 +54,9 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 
 @Composable
-fun AddItemsScreen() {
+fun AddItemsScreen(
+    onBackClickInstance : () -> Unit
+) {
 
     //Add items dialog
     var isDialogAdd by rememberSaveable {
@@ -81,7 +83,7 @@ fun AddItemsScreen() {
     ) {
         //TopAppBar
         TopBar(onAddIconClick = { isDialogAdd = true },
-            onBackIconClick = {}
+            onBackIconClick = {onBackClickInstance()}
         )
 
         //responsive lazy layout
@@ -168,5 +170,5 @@ private fun ItemCard(
 @PreviewScreenSizes
 @Composable
 private fun AddItemsScreenPreview() {
-    AddItemsScreen()
+    AddItemsScreen(onBackClickInstance = {})
 }
