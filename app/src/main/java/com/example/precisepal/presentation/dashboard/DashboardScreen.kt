@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -60,6 +62,7 @@ fun DashboardScreen(
     onFabClick: () -> Unit,
     //we are passing string for that body part id
     onItemCardClicked: (String) -> Unit,
+    paddingValuesInstance: PaddingValues,
 ) {
     //Dummy data!
     val user = User(
@@ -97,9 +100,11 @@ fun DashboardScreen(
         userInstance = user
     )
 
-    //main content
+    //Main Screen UI
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValuesInstance)
     )
     {
         Column(
@@ -144,6 +149,8 @@ fun DashboardTopBar(
     onProfileClicks: () -> Unit,
 ) {
     TopAppBar(
+        //removing the default padding in the topBar
+        windowInsets = WindowInsets(0, 0, 0 , 0),
         modifier = Modifier.padding(horizontal = 8.dp),
         title = {
             Text(
@@ -220,6 +227,10 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
 @Composable
 fun DashboardScreenPreview() {
     PrecisePalTheme {
-        DashboardScreen(onItemCardClicked = {}, onFabClick = {})
+        DashboardScreen(
+            onItemCardClicked = {},
+            onFabClick = {},
+            paddingValuesInstance = PaddingValues(0.dp)
+        )
     }
 }

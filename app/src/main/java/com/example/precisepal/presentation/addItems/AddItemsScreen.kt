@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,9 +57,9 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 @Composable
 fun AddItemsScreen(
-    onBackClickInstance : () -> Unit
-) {
-
+    onBackClickInstance : () -> Unit,
+    paddingValuesInstance: PaddingValues
+    ) {
     //Add items dialog
     var isDialogAdd by rememberSaveable {
         mutableStateOf(false)
@@ -78,6 +80,7 @@ fun AddItemsScreen(
     //Main Screen layout
     Column(
         modifier = Modifier
+            .padding(paddingValuesInstance)
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
     ) {
@@ -113,6 +116,7 @@ fun AddItemsScreen(
 @Composable
 fun TopBar(onAddIconClick: () -> Unit, onBackIconClick: () -> Unit) {
     TopAppBar(
+        windowInsets = WindowInsets(0, 0, 0 , 0),
         modifier = Modifier.fillMaxWidth(),
         title = { Text("Add new item") },
         navigationIcon = {
@@ -170,5 +174,5 @@ private fun ItemCard(
 @PreviewScreenSizes
 @Composable
 private fun AddItemsScreenPreview() {
-    AddItemsScreen(onBackClickInstance = {})
+    AddItemsScreen(onBackClickInstance = {}, paddingValuesInstance = PaddingValues(0.dp))
 }

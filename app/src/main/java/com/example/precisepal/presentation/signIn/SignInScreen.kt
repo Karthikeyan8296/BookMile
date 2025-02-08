@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -40,7 +41,7 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 
 @Composable
-fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
+fun SignInScreen(paddingValuesInstance: PaddingValues, windowSizeInstance: WindowWidthSizeClass) {
 
     //Dialog
     var isDialogOpen by rememberSaveable {
@@ -50,7 +51,7 @@ fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
     MeasureMateDialog(
         isOpen = isDialogOpen,
         onDismiss = { isDialogOpen = false },
-        onConfirm = {isDialogOpen = false},
+        onConfirm = { isDialogOpen = false },
         title = "welcome back boobs",
         body = { Text("yah my body") },
         confirmButtonText = "Yes",
@@ -62,6 +63,7 @@ fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             Column(
                 modifier = Modifier
+                    .padding(paddingValuesInstance)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,7 +97,7 @@ fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
                 AnonymouslySignInButton(
                     loadingState = false,
                     modifier = Modifier,
-                    onButtonClick = {isDialogOpen = true})
+                    onButtonClick = { isDialogOpen = true })
             }
         }
         //Else use this UI
@@ -124,7 +126,7 @@ fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onBackground,
-                        )
+                    )
                     Text(
                         text = stringResource(R.string.onboarding_into),
                         fontWeight = FontWeight.SemiBold,
@@ -148,7 +150,7 @@ fun SignInScreen(windowSizeInstance: WindowWidthSizeClass) {
                     AnonymouslySignInButton(
                         loadingState = false,
                         modifier = Modifier,
-                        onButtonClick = {isDialogOpen = true})
+                        onButtonClick = { isDialogOpen = true })
                 }
             }
         }
@@ -164,6 +166,7 @@ private fun Preview() {
     SignInScreen(
         //Medium is used to check the screen in landscape mode
         //Compact is used to check the screen in portrait mode
-        windowSizeInstance = WindowWidthSizeClass.Compact
+        windowSizeInstance = WindowWidthSizeClass.Compact,
+        paddingValuesInstance = PaddingValues(0.dp)
     )
 }

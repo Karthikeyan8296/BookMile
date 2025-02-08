@@ -9,8 +9,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -85,6 +87,7 @@ fun DetailsScreen(
     windowSizeInstance: WindowWidthSizeClass,
     bodyPartIDInstance: String,
     onBackClickInstance: () -> Unit,
+    paddingValuesInstance: PaddingValues,
 ) {
     //Dialog
     var isDeleteDialogOpen by rememberSaveable {
@@ -163,77 +166,74 @@ fun DetailsScreen(
     when (windowSizeInstance) {
         WindowWidthSizeClass.Compact -> {
             //Screen UI
-            Scaffold { contentPadding ->
-                Box(
+            Box(
+                modifier = modifier
+                    .padding(paddingValuesInstance)
+//                    .consumeWindowInsets(contentPadding)
+//                    .imePadding()
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background)
+            ) {
+                //Main Layout
+                Column(
                     modifier = modifier
-                        .padding(contentPadding)
-                        .consumeWindowInsets(contentPadding)
-                        .imePadding()
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.background)
                 ) {
-                    //Main Layout
-                    Column(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colorScheme.background)
-                    ) {
-                        //header
-                        DetailsTopBar(
-                            onDeleteIconClick = { isDeleteDialogOpen = true },
-                            onBackIconClick = { onBackClickInstance() },
-                            onUnitIconClick = { isBottomSheetOpen = true },
-                            bodyPartInstance = dummyBodyPart
-                        )
-                        //toggle button component
-                        ChartTimeRangeButton(
-                            onButtonClick = { selectedTimeRange = it },
-                            selectedTimeRange = selectedTimeRange
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        //graph component
-                        LineGraph(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(ratio = 2 / 1f)
-                                .padding(16.dp),
-                            bodyPartValueInstance = dummyList
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        HistorySection(
-                            bodyPartInstance = dummyList,
-                            onDeleteIconClick = {},
-                            measuringUnitCode = "cm"
-                        )
-                    }
-
-                    //input field
-                    NewValueInputBar(
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                        value = inputValue,
-                        //it will display the date over here
-                        date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
-                            .changeLocalDateToFullDate(),
-                        onDoneClick = {},
-                        onValueChange = { inputValue = it },
-                        onCalenderIconClick = { isDatePickerOpen = true },
-                        onDoneImeActionClick = {
-                            focusManager.clearFocus()
-                        },
-                        isInputValueCardVisible = isInputValueCardVisible
+                    //header
+                    DetailsTopBar(
+                        onDeleteIconClick = { isDeleteDialogOpen = true },
+                        onBackIconClick = { onBackClickInstance() },
+                        onUnitIconClick = { isBottomSheetOpen = true },
+                        bodyPartInstance = dummyBodyPart
                     )
-                    //hide
-                    InputCardHideIcon(
+                    //toggle button component
+                    ChartTimeRangeButton(
+                        onButtonClick = { selectedTimeRange = it },
+                        selectedTimeRange = selectedTimeRange
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    //graph component
+                    LineGraph(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 6.dp),
-                        isInputValueCardVisible = isInputValueCardVisible,
-                        onClick = { isInputValueCardVisible = !isInputValueCardVisible }
+                            .fillMaxWidth()
+                            .aspectRatio(ratio = 2 / 1f)
+                            .padding(16.dp),
+                        bodyPartValueInstance = dummyList
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HistorySection(
+                        bodyPartInstance = dummyList,
+                        onDeleteIconClick = {},
+                        measuringUnitCode = "cm"
                     )
                 }
+
+                //input field
+                NewValueInputBar(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    value = inputValue,
+                    //it will display the date over here
+                    date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
+                        .changeLocalDateToFullDate(),
+                    onDoneClick = {},
+                    onValueChange = { inputValue = it },
+                    onCalenderIconClick = { isDatePickerOpen = true },
+                    onDoneImeActionClick = {
+                        focusManager.clearFocus()
+                    },
+                    isInputValueCardVisible = isInputValueCardVisible
+                )
+                //hide
+                InputCardHideIcon(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 6.dp),
+                    isInputValueCardVisible = isInputValueCardVisible,
+                    onClick = { isInputValueCardVisible = !isInputValueCardVisible }
+                )
             }
         }
-
         else -> {
             Column(
                 modifier = modifier
@@ -336,6 +336,7 @@ fun DetailsTopBar(
     bodyPartInstance: BodyPart?,
 ) {
     TopAppBar(
+        windowInsets = WindowInsets(0, 0, 0 , 0),
         modifier = Modifier.fillMaxWidth(),
         title = {
             Text(
@@ -568,5 +569,7 @@ private fun DetailsScreenPreview() {
     DetailsScreen(
         windowSizeInstance = WindowWidthSizeClass.Compact,
         bodyPartIDInstance = "",
-        onBackClickInstance = {})
+        onBackClickInstance = {},
+        paddingValuesInstance = PaddingValues(0.dp)
+    )
 }

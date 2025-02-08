@@ -3,6 +3,7 @@ package com.example.precisepal.presentation.navigation
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -19,6 +20,7 @@ import com.example.precisepal.presentation.signIn.SignInScreen
 fun NavGraph(
     navControllerInstance: NavHostController,
     windowSize: WindowSizeClass,
+    paddingValuesInstance: PaddingValues,
 ) {
     NavHost(
         navController = navControllerInstance,
@@ -28,16 +30,22 @@ fun NavGraph(
     {
         //for which screen we will use this composable block
         composable<Routes.SignInScreen> {
-            SignInScreen(windowSizeInstance = windowSize.widthSizeClass)
+            SignInScreen(
+                windowSizeInstance = windowSize.widthSizeClass,
+                paddingValuesInstance = paddingValuesInstance
+            )
         }
 
-        composable<Routes.DashboardScreen>{
+        composable<Routes.DashboardScreen> {
             DashboardScreen(
                 onFabClick = { navControllerInstance.navigate(Routes.AddItemsScreen) },
-                //we are passing the bodyPartID
-                onItemCardClicked = { bodyPartId ->
-                    navControllerInstance.navigate(Routes.DetailsScreen(bodyPartId))
-                })
+                //We are passing the bodyPartID
+                //In that lambda function we are passing that string
+                onItemCardClicked = { bodyPartID ->
+                    navControllerInstance.navigate(Routes.DetailsScreen(bodyPartID))
+                },
+                paddingValuesInstance = paddingValuesInstance
+            )
         }
 
         composable<Routes.AddItemsScreen>(
@@ -53,7 +61,10 @@ fun NavGraph(
                     towards = AnimatedContentTransitionScope.SlideDirection.End
                 )
             }) {
-            AddItemsScreen(onBackClickInstance = { navControllerInstance.navigateUp() })
+            AddItemsScreen(
+                onBackClickInstance = { navControllerInstance.navigateUp() },
+                paddingValuesInstance = paddingValuesInstance
+            )
         }
 
         composable<Routes.DetailsScreen>(
@@ -73,7 +84,8 @@ fun NavGraph(
             DetailsScreen(
                 windowSizeInstance = windowSize.widthSizeClass,
                 bodyPartIDInstance = bodyPartID,
-                onBackClickInstance = { navControllerInstance.navigateUp() }
+                onBackClickInstance = { navControllerInstance.navigateUp() },
+                paddingValuesInstance = paddingValuesInstance
             )
         }
     }

@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -40,7 +41,15 @@ class MainActivity : ComponentActivity() {
                 //to remember the navigation in the app
                 val navController = rememberNavController()
                 //now our app will start from the navGraph
-                NavGraph(navControllerInstance = navController, windowSize = windowSizeClass)
+                Scaffold { paddingValues ->
+                    NavGraph(
+                        navControllerInstance = navController,
+                        windowSize = windowSizeClass,
+                        paddingValuesInstance = paddingValues
+                    )
+
+                }
+
             }
         }
     }
