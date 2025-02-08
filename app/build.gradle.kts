@@ -77,4 +77,6 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     //kotlin serialization for navigation
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    //Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.0")
 }
