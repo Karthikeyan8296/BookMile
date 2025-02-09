@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +16,7 @@ import com.example.precisepal.presentation.addItems.AddItemsScreen
 import com.example.precisepal.presentation.dashboard.DashboardScreen
 import com.example.precisepal.presentation.details.DetailsScreen
 import com.example.precisepal.presentation.signIn.SignInScreen
+import com.example.precisepal.presentation.signIn.SignInViewModel
 
 @SuppressLint("NewApi")
 @Composable
@@ -30,9 +33,14 @@ fun NavGraph(
     {
         //for which screen we will use this composable block
         composable<Routes.SignInScreen> {
+            //we need to initialize the state and event here from view model
+            val signInViewModel : SignInViewModel = SignInViewModel()
+            val state by signInViewModel.state.collectAsStateWithLifecycle()
             SignInScreen(
                 windowSizeInstance = windowSize.widthSizeClass,
-                paddingValuesInstance = paddingValuesInstance
+                paddingValuesInstance = paddingValuesInstance,
+                state = state,
+                onEvent = signInViewModel::onEvent
             )
         }
 

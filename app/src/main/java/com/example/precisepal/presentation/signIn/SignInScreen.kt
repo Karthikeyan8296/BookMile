@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +42,13 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 
 @Composable
-fun SignInScreen(paddingValuesInstance: PaddingValues, windowSizeInstance: WindowWidthSizeClass) {
+fun SignInScreen(
+    paddingValuesInstance: PaddingValues,
+    windowSizeInstance: WindowWidthSizeClass,
+    state: SignInState,
+    onEvent: (SignInEvent) -> Unit,
+) {
+    val contextInstance = LocalContext.current
 
     //Dialog
     var isDialogOpen by rememberSaveable {
@@ -51,8 +58,12 @@ fun SignInScreen(paddingValuesInstance: PaddingValues, windowSizeInstance: Windo
     MeasureMateDialog(
         isOpen = isDialogOpen,
         onDismiss = { isDialogOpen = false },
-        onConfirm = { isDialogOpen = false },
-        title = "welcome back boobs",
+        //connecting the events
+        onConfirm = {
+            onEvent(SignInEvent.SignInAnonymously)
+            isDialogOpen = false
+        },
+        title = "welcome back",
         body = { Text("yah my body") },
         confirmButtonText = "Yes",
         dismissButtonText = "Cancel"
@@ -93,9 +104,14 @@ fun SignInScreen(paddingValuesInstance: PaddingValues, windowSizeInstance: Windo
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                GoogleSignInButton(loadingState = false, onButtonClick = {})
+                GoogleSignInButton(
+                    //state
+                    loadingState = state.isGoogleSignInButtonLoading,
+                    //events
+                    onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
                 AnonymouslySignInButton(
-                    loadingState = false,
+                    //state
+                    loadingState = state.isAnonymousSignInButtonLoading,
                     modifier = Modifier,
                     onButtonClick = { isDialogOpen = true })
             }
@@ -145,10 +161,10 @@ fun SignInScreen(paddingValuesInstance: PaddingValues, windowSizeInstance: Windo
                     verticalArrangement = Arrangement.Center
                 ) {
                     GoogleSignInButton(
-                        loadingState = false,
-                        onButtonClick = {})
+                        loadingState = state.isGoogleSignInButtonLoading,
+                        onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
                     AnonymouslySignInButton(
-                        loadingState = false,
+                        loadingState = state.isAnonymousSignInButtonLoading,
                         modifier = Modifier,
                         onButtonClick = { isDialogOpen = true })
                 }
@@ -167,6 +183,8 @@ private fun Preview() {
         //Medium is used to check the screen in landscape mode
         //Compact is used to check the screen in portrait mode
         windowSizeInstance = WindowWidthSizeClass.Compact,
-        paddingValuesInstance = PaddingValues(0.dp)
+        paddingValuesInstance = PaddingValues(0.dp),
+        state = SignInState(),
+        onEvent = {}
     )
 }

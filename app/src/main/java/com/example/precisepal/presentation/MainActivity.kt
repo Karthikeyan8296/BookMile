@@ -36,9 +36,7 @@ class MainActivity : ComponentActivity() {
                         windowSize = windowSizeClass,
                         paddingValuesInstance = paddingValues
                     )
-
                 }
-
             }
         }
     }
