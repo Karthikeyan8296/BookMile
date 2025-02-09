@@ -1,4 +1,4 @@
-package com.example.precisepal
+package com.example.precisepal.presentation
 
 import android.os.Build
 import android.os.Bundle
@@ -6,27 +6,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
-import com.example.precisepal.presentation.addItems.AddItemsScreen
-import com.example.precisepal.presentation.dashboard.DashboardScreen
-import com.example.precisepal.presentation.dashboard.DashboardTopBar
-import com.example.precisepal.presentation.details.DetailsScreen
 import com.example.precisepal.presentation.navigation.NavGraph
-import com.example.precisepal.presentation.signIn.SignInScreen
 import com.example.precisepal.presentation.theme.PrecisePalTheme
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
