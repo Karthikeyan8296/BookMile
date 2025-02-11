@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,7 +35,9 @@ fun NavGraph(
         //for which screen we will use this composable block
         composable<Routes.SignInScreen> {
             //we need to initialize the state and event here from view model
-            val signInViewModel : SignInViewModel = SignInViewModel()
+//            val signInViewModel : SignInViewModel = SignInViewModel()
+//            after implementation the di
+            val signInViewModel : SignInViewModel = hiltViewModel()
             val state by signInViewModel.state.collectAsStateWithLifecycle()
             SignInScreen(
                 windowSizeInstance = windowSize.widthSizeClass,

@@ -15,9 +15,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.example.precisepal.presentation.navigation.NavGraph
 import com.example.precisepal.presentation.theme.PrecisePalTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//Android entry point is used to inject the dependencies in the activity
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

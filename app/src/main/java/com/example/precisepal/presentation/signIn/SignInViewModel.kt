@@ -3,6 +3,7 @@ package com.example.precisepal.presentation.signIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.precisepal.domain.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -10,6 +11,7 @@ import javax.inject.Inject
 
 //those state and events will be managed in the view model
 //we are getting this auth interface
+@HiltViewModel
 class SignInViewModel @Inject constructor (private val authRepository: AuthRepository) : ViewModel() {
 
     //for state we will use mutableStateFlow

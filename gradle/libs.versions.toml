@@ -15,7 +15,7 @@ uiTextGoogleFonts = "1.7.6"
 foundationLayoutAndroid = "1.6.6"
 volley = "1.2.1"
 daggerHilt = "2.51.1"
-ksp = "2.0.21-1.0.27"
+ksp = "2.0.0-1.0.24"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
