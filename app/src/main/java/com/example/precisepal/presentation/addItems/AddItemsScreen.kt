@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -57,9 +58,10 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 
 @Composable
 fun AddItemsScreen(
-    onBackClickInstance : () -> Unit,
-    paddingValuesInstance: PaddingValues
-    ) {
+    onBackClickInstance: () -> Unit,
+    paddingValuesInstance: PaddingValues,
+    snackbarHostStateInstanceScreen: SnackbarHostState,
+) {
     //Add items dialog
     var isDialogAdd by rememberSaveable {
         mutableStateOf(false)
@@ -86,7 +88,7 @@ fun AddItemsScreen(
     ) {
         //TopAppBar
         TopBar(onAddIconClick = { isDialogAdd = true },
-            onBackIconClick = {onBackClickInstance()}
+            onBackIconClick = { onBackClickInstance() }
         )
 
         //responsive lazy layout
@@ -116,7 +118,7 @@ fun AddItemsScreen(
 @Composable
 fun TopBar(onAddIconClick: () -> Unit, onBackIconClick: () -> Unit) {
     TopAppBar(
-        windowInsets = WindowInsets(0, 0, 0 , 0),
+        windowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.fillMaxWidth(),
         title = { Text("Add new item") },
         navigationIcon = {
@@ -174,5 +176,9 @@ private fun ItemCard(
 @PreviewScreenSizes
 @Composable
 private fun AddItemsScreenPreview() {
-    AddItemsScreen(onBackClickInstance = {}, paddingValuesInstance = PaddingValues(0.dp))
+    AddItemsScreen(
+        onBackClickInstance = {},
+        paddingValuesInstance = PaddingValues(0.dp),
+        snackbarHostStateInstanceScreen = SnackbarHostState()
+    )
 }

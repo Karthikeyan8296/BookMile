@@ -61,7 +61,8 @@ fun ProfileBottomSheet(
                 GoogleSignInButton(
                     onButtonClick = { onButtonClick() },
                     loadingState = buttonLoadingState,
-                    primaryText = buttonPrimaryText
+                    primaryText = buttonPrimaryText,
+                    enableUI = true
                 )
             }
         }

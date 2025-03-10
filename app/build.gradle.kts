@@ -5,11 +5,12 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
     namespace = "com.example.precisepal"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.precisepal"
@@ -87,4 +88,14 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     ksp("androidx.hilt:hilt-compiler:1.2.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+    //firebase auth
+    implementation("com.google.firebase:firebase-auth")
+    //credential manager
+    implementation(libs.androidx.credentials)
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0-rc01")
+    implementation ("com.google.android.libraries.identity.googleid:googleid:<latest version>")
 }

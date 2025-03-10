@@ -25,6 +25,7 @@ import com.example.precisepal.R
 @Composable
 fun GoogleSignInButton(
     loadingState: Boolean = false,
+    enableUI: Boolean = false,
     primaryText: String = "Sign in with Google",
     secondaryText: String = "Processing...",
     onButtonClick: () -> Unit,
@@ -35,7 +36,7 @@ fun GoogleSignInButton(
         buttonText = if (loadingState) secondaryText else primaryText
     }
 
-    Button(onClick = { onButtonClick() }, modifier = Modifier) {
+    Button(onClick = { onButtonClick() }, modifier = Modifier, enabled = enableUI) {
         Icon(
             painter = painterResource(id = R.drawable.ic_google),
             contentDescription = "Google Logo",

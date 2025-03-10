@@ -1,6 +1,5 @@
 package com.example.precisepal.presentation.signIn
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,14 +31,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastCbrt
 import com.example.precisepal.R
 import com.example.precisepal.presentation.components.AnonymouslySignInButton
 import com.example.precisepal.presentation.components.GoogleSignInButton
 import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.util.UIEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 
 @Composable
@@ -47,8 +48,21 @@ fun SignInScreen(
     windowSizeInstance: WindowWidthSizeClass,
     state: SignInState,
     onEvent: (SignInEvent) -> Unit,
+    uiEvent: Flow<UIEvent>,
+    snackBarHostStateInstanceScreen: SnackbarHostState,
 ) {
     val contextInstance = LocalContext.current
+
+    //snack bar
+    LaunchedEffect(key1 = Unit) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackBarHostStateInstanceScreen.showSnackbar(event.message)
+                }
+            }
+        }
+    }
 
     //Dialog
     var isDialogOpen by rememberSaveable {
@@ -107,11 +121,13 @@ fun SignInScreen(
                 GoogleSignInButton(
                     //state
                     loadingState = state.isGoogleSignInButtonLoading,
+                    enableUI = !state.isGoogleSignInButtonLoading && !state.isAnonymousSignInButtonLoading,
                     //events
                     onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
                 AnonymouslySignInButton(
                     //state
                     loadingState = state.isAnonymousSignInButtonLoading,
+                    enableUI = !state.isAnonymousSignInButtonLoading && !state.isGoogleSignInButtonLoading,
                     modifier = Modifier,
                     onButtonClick = { isDialogOpen = true })
             }
@@ -161,10 +177,15 @@ fun SignInScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     GoogleSignInButton(
+                        //state
                         loadingState = state.isGoogleSignInButtonLoading,
+                        enableUI = !state.isGoogleSignInButtonLoading && !state.isAnonymousSignInButtonLoading,
+                        //events
                         onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
                     AnonymouslySignInButton(
+                        //state
                         loadingState = state.isAnonymousSignInButtonLoading,
+                        enableUI = !state.isAnonymousSignInButtonLoading && !state.isGoogleSignInButtonLoading,
                         modifier = Modifier,
                         onButtonClick = { isDialogOpen = true })
                 }
@@ -185,6 +206,8 @@ private fun Preview() {
         windowSizeInstance = WindowWidthSizeClass.Compact,
         paddingValuesInstance = PaddingValues(0.dp),
         state = SignInState(),
-        onEvent = {}
+        onEvent = {},
+        snackBarHostStateInstanceScreen = SnackbarHostState(),
+        uiEvent = flowOf()
     )
 }

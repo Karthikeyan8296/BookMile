@@ -28,10 +28,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +57,9 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 import com.example.precisepal.presentation.components.ProfileBottomSheet
 import com.example.precisepal.presentation.components.ProfilePicPlaceholder
 import com.example.precisepal.presentation.theme.PrecisePalTheme
+import com.example.precisepal.presentation.util.UIEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +68,10 @@ fun DashboardScreen(
     //we are passing string for that body part id
     onItemCardClicked: (String) -> Unit,
     paddingValuesInstance: PaddingValues,
+    uiEvent: Flow<UIEvent>,
+    onEvent: (DashboardEvents) -> Unit,
+    state: DashboardState,
+    snackbarHostStateInstanceScreen: SnackbarHostState,
 ) {
     //Dummy data!
     val user = User(
@@ -72,6 +81,17 @@ fun DashboardScreen(
         profilePic = "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
         isAnonymous = false,
     )
+
+    //snack bar
+    LaunchedEffect(key1 = Unit) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                }
+            }
+        }
+    }
 
     //Sign out button state
     var isDialogSignOut by rememberSaveable {
@@ -83,7 +103,10 @@ fun DashboardScreen(
         title = "Sign Out",
         isOpen = isDialogSignOut,
         onDismiss = { isDialogSignOut = false },
-        onConfirm = { isDialogSignOut = false },
+        onConfirm = {
+            onEvent(DashboardEvents.SignOut)
+            isDialogSignOut = false
+        },
         confirmButtonText = "Yes",
         dismissButtonText = "No"
     )
@@ -95,8 +118,8 @@ fun DashboardScreen(
         onDismiss = { isProfileSheetOpen = false }, isOpen = isProfileSheetOpen,
         sheetState = rememberModalBottomSheetState(),
         buttonPrimaryText = "Sign out from Google",
-        buttonLoadingState = false,
-        onButtonClick = { isDialogSignOut = true },
+        buttonLoadingState = state.isSignOutButtonLoading,
+        onButtonClick = {isDialogSignOut = true },
         userInstance = user
     )
 
@@ -150,7 +173,7 @@ fun DashboardTopBar(
 ) {
     TopAppBar(
         //removing the default padding in the topBar
-        windowInsets = WindowInsets(0, 0, 0 , 0),
+        windowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.padding(horizontal = 8.dp),
         title = {
             Text(
@@ -230,7 +253,11 @@ fun DashboardScreenPreview() {
         DashboardScreen(
             onItemCardClicked = {},
             onFabClick = {},
-            paddingValuesInstance = PaddingValues(0.dp)
+            paddingValuesInstance = PaddingValues(0.dp),
+            snackbarHostStateInstanceScreen = SnackbarHostState(),
+            uiEvent = flowOf(),
+            onEvent = {},
+            state = DashboardState()
         )
     }
 }

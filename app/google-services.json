@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "878942524412",
+    "project_id": "precisepal-608d7",
+    "storage_bucket": "precisepal-608d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878942524412:android:95141f3199832ed5465879",
+        "android_client_info": {
+          "package_name": "com.example.precisepal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878942524412-170rf5bmjfae35n2pr3pheug7aif9fd8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.precisepal",
+            "certificate_hash": "9ef8ad4b828b72e63623042951e13d3a84f97ded"
+          }
+        },
+        {
+          "client_id": "878942524412-cmvvk3631v2hl12sk56f0d8cjebd5fpt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4W42S7LQOjKWC2UtbBirfuCuC3cSqBr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878942524412-cmvvk3631v2hl12sk56f0d8cjebd5fpt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

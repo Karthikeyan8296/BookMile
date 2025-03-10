@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.dagger.hilt) apply false
     //ksp
     alias(libs.plugins.ksp) apply false
+    //firebase
+    alias(libs.plugins.google.services) apply false
 
     //this plugins will be initialized in the libs.version file
 }

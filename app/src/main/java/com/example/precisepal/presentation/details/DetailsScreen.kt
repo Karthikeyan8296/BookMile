@@ -41,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,6 +90,7 @@ fun DetailsScreen(
     bodyPartIDInstance: String,
     onBackClickInstance: () -> Unit,
     paddingValuesInstance: PaddingValues,
+    snackbarHostStateInstanceScreen: SnackbarHostState
 ) {
     //Dialog
     var isDeleteDialogOpen by rememberSaveable {
@@ -563,13 +566,14 @@ fun InputCardHideIcon(
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@PreviewScreenSizes
+@Preview
 @Composable
 private fun DetailsScreenPreview() {
     DetailsScreen(
         windowSizeInstance = WindowWidthSizeClass.Compact,
         bodyPartIDInstance = "",
         onBackClickInstance = {},
-        paddingValuesInstance = PaddingValues(0.dp)
+        paddingValuesInstance = PaddingValues(0.dp),
+        snackbarHostStateInstanceScreen = SnackbarHostState()
     )
 }

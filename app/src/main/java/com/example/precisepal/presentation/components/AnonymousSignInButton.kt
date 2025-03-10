@@ -28,6 +28,7 @@ import com.example.precisepal.R
 fun AnonymouslySignInButton(
     modifier: Modifier,
     loadingState: Boolean = false,
+    enableUI: Boolean = false,
     primaryText: String = "Continue without Login",
     secondaryText: String = "Processing...",
     onButtonClick: () -> Unit,
@@ -40,7 +41,7 @@ fun AnonymouslySignInButton(
         buttonText = if (loadingState) secondaryText else primaryText
     }
 
-    TextButton(onClick = { onButtonClick() }, modifier = Modifier) {
+    TextButton(onClick = { onButtonClick() }, modifier = Modifier, enabled = enableUI) {
         Text(
             text = buttonText,
             color = MaterialTheme.colorScheme.inversePrimary,
