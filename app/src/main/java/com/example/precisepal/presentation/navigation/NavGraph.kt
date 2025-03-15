@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +24,7 @@ import com.example.precisepal.presentation.dashboard.DashboardViewModel
 import com.example.precisepal.presentation.details.DetailsScreen
 import com.example.precisepal.presentation.signIn.SignInScreen
 import com.example.precisepal.presentation.signIn.SignInViewModel
+import com.example.precisepal.presentation.util.UIEvent
 
 @SuppressLint("NewApi")
 @Composable
@@ -33,12 +35,23 @@ fun NavGraph(
     paddingValuesInstance: PaddingValues,
     snackBarHostStateInstance: SnackbarHostState,
 ) {
+    //using outside the signInScreen, bc the signIn func takes time in completing
+    LaunchedEffect(key1 = Unit) {
+        signInViewModelInstance.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackBarHostStateInstance.showSnackbar(event.message)
+                }
+            }
+        }
+    }
     NavHost(
         navController = navControllerInstance,
         //here we are telling, from where our app will starts
         startDestination = Routes.DashboardScreen
     )
     {
+
         //for which screen we will use this composable block
         composable<Routes.SignInScreen> {
             //we need to initialize the state and event here from view model

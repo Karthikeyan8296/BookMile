@@ -92,6 +92,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
     //firebase auth
     implementation("com.google.firebase:firebase-auth")
+    //firebase fireStore
+    implementation("com.google.firebase:firebase-firestore")
     //credential manager
     implementation(libs.androidx.credentials)
     // optional - needed for credentials support from play services, for devices running

@@ -53,16 +53,16 @@ fun SignInScreen(
 ) {
     val contextInstance = LocalContext.current
 
-    //snack bar
-    LaunchedEffect(key1 = Unit) {
-        uiEvent.collect { event ->
-            when (event) {
-                is UIEvent.ShowSnackBar -> {
-                    snackBarHostStateInstanceScreen.showSnackbar(event.message)
-                }
-            }
-        }
-    }
+    //snack bar -> it is in the navGraph
+//    LaunchedEffect(key1 = Unit) {
+//        uiEvent.collect { event ->
+//            when (event) {
+//                is UIEvent.ShowSnackBar -> {
+//                    snackBarHostStateInstanceScreen.showSnackbar(event.message)
+//                }
+//            }
+//        }
+//    }
 
     //Dialog
     var isDialogOpen by rememberSaveable {

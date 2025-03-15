@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.precisepal.domain.model.AuthStatus
 import com.example.precisepal.domain.repository.AuthRepository
+import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +22,10 @@ import javax.inject.Inject
 //those state and events will be managed in the view model
 //we are getting this auth interface
 @HiltViewModel
-class SignInViewModel @Inject constructor(private val authRepository: AuthRepository) :
+class SignInViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val databaseRepository: DatabaseRepository,
+) :
     ViewModel() {
 
     //for snackBar event
@@ -78,8 +82,19 @@ class SignInViewModel @Inject constructor(private val authRepository: AuthReposi
         viewModelScope.launch {
             _state.update { it.copy(isGoogleSignInButtonLoading = true) }
             authRepository.signInWithGoogle(context)
-                .onSuccess {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully"))
+                .onSuccess { isNewUser ->
+                    //firebase user collection - storing the user in database
+                    if (isNewUser) {
+                        databaseRepository.addUser()
+                            .onSuccess {
+                                _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
+                            }
+                            .onFailure { e ->
+                                _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
+                            }
+                    } else {
+                        _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data already stored in the database"))
+                    }
                 }
                 .onFailure { e ->
                     _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign in. please try again later ${e.message}"))

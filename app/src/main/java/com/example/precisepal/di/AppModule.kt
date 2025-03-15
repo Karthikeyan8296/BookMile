@@ -7,6 +7,7 @@ import com.example.precisepal.data.repository.DatabaseRepositoryImpl
 import com.example.precisepal.domain.repository.AuthRepository
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,10 +47,17 @@ object AppModule {
         return FirebaseAuth.getInstance()
     }
 
+    //fire base firestore
+    @Provides
+    @Singleton
+    fun provideFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
     @Provides
     @Singleton
     //we use provide as prefix to the function
-    fun provideDataBaseRepository(firebaseAuth: FirebaseAuth): DatabaseRepository {
-        return DatabaseRepositoryImpl(firebaseAuth)
+    fun provideDataBaseRepository(firebaseAuth: FirebaseAuth, firestore: FirebaseFirestore): DatabaseRepository {
+        return DatabaseRepositoryImpl(firebaseAuth, firestore)
     }
 }
