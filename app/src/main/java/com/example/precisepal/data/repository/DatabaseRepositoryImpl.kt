@@ -1,11 +1,16 @@
 package com.example.precisepal.data.repository
 
 import com.example.precisepal.data.mapper.UserDTO
+import com.example.precisepal.data.mapper.toUser
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
+import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class DatabaseRepositoryImpl(
@@ -45,6 +50,25 @@ class DatabaseRepositoryImpl(
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    //getting the user names from the firestore and show in UI, from the user mapper function
+    override fun getSignInUserName(): Flow<User?> {
+        return flow{
+            try {
+                val userID = firebaseAuth.currentUser?.uid ?: ""
+                userCollection()
+                    .document(userID)
+                    .snapshots()
+                    .collect{ snapshot ->
+                        val userDTO = snapshot.toObject(UserDTO::class.java)
+                        emit(userDTO?.toUser())
+                    }
+            }
+            catch (e:Exception){
+                throw e
+            }
         }
     }
 }

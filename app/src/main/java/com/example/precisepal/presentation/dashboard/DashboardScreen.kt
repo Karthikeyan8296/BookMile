@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,13 +75,15 @@ fun DashboardScreen(
     snackbarHostStateInstanceScreen: SnackbarHostState,
 ) {
     //Dummy data!
-    val user = User(
-        name = "Karthik",
-        email = "Karthik@measuremate.io",
-        userID = "abx07",
-        profilePic = "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        isAnonymous = false,
-    )
+//    val user = User(
+//        name = "Karthik",
+//        email = "Karthik@measuremate.io",
+//        userID = "abx07",
+//        profilePic = "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+//        isAnonymous = false,
+//    )
+
+    val context = LocalContext.current
 
     //snack bar
     LaunchedEffect(key1 = Unit) {
@@ -114,13 +117,22 @@ fun DashboardScreen(
     var isProfileSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val isUserAnonymous = state.user?.isAnonymous ?: true
     ProfileBottomSheet(
-        onDismiss = { isProfileSheetOpen = false }, isOpen = isProfileSheetOpen,
+        onDismiss = { isProfileSheetOpen = false },
+        isOpen = isProfileSheetOpen,
         sheetState = rememberModalBottomSheetState(),
-        buttonPrimaryText = "Sign out from Google",
-        buttonLoadingState = state.isSignOutButtonLoading,
-        onButtonClick = {isDialogSignOut = true },
-        userInstance = user
+        buttonPrimaryText = if (isUserAnonymous) "Sign In with Google" else "Sign Out with Google",
+        buttonLoadingState = if (isUserAnonymous) state.isSignOutButtonLoading else state.isSignOutButtonLoading,
+        onButtonClick = {
+            if (isUserAnonymous) onEvent(
+                DashboardEvents.AnonymousUserSignInWithGoogle(
+                    context
+                )
+            ) else isDialogSignOut = true
+        },
+        userInstance = state.user
     )
 
     //Main Screen UI
@@ -138,7 +150,7 @@ fun DashboardScreen(
             //Dashboard header
             DashboardTopBar(
                 onProfileClicks = { isProfileSheetOpen = true },
-                profilePicURL = "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg"
+                profilePicURL = state.user?.profilePic
             )
 
             //responsive lazy layout
