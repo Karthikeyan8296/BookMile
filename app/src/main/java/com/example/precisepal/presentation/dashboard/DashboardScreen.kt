@@ -1,5 +1,6 @@
 package com.example.precisepal.presentation.dashboard
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -178,11 +179,15 @@ fun DashboardScreen(
                 //if we are implementing single card at top, we can use item!
                 //item {}
                 //bunch of cards can be defined here, with items!
-                items(predefinedBodyPart) { bodyPart ->
+                items(state.bodyParts) { bodyPart ->
                     ItemCard(bodyPartInstance = bodyPart, onCardClick = onItemCardClicked)
                 }
             }
         }
+        LaunchedEffect(state.bodyParts) {
+            Log.d("lazy", "Google signIn error ${state.bodyParts}")
+        }
+
         FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -286,7 +291,7 @@ fun DashboardScreenPreview() {
             snackbarHostStateInstanceScreen = SnackbarHostState(),
             uiEvent = flowOf(),
             onEvent = {},
-            state = DashboardState()
+            state = DashboardState(bodyParts = predefinedBodyPart)
         )
     }
 }

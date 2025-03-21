@@ -49,10 +49,13 @@ class DashboardViewModel @Inject constructor(
     private val _state = MutableStateFlow(DashboardState())
     val state = combine(
         _state,
-        databaseRepository.getSignInUserName()
-    ) { state, user ->
+        databaseRepository.getSignInUserName(),
+        databaseRepository.getAllBodyParts()
+    ) { state, user, bodyParts ->
+        val activeBodyParts = bodyParts.filter { it.isActive }
         state.copy(
-            user = user
+            user = user,
+            bodyParts = activeBodyParts
         )
     }.catch { e ->
         _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${e.message}"))

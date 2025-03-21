@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.precisepal.presentation.addItems.AddItemsScreen
+import com.example.precisepal.presentation.addItems.AddItemsViewModel
 import com.example.precisepal.presentation.dashboard.DashboardScreen
 import com.example.precisepal.presentation.dashboard.DashboardState
 import com.example.precisepal.presentation.dashboard.DashboardViewModel
@@ -104,10 +105,15 @@ fun NavGraph(
                     towards = AnimatedContentTransitionScope.SlideDirection.End
                 )
             }) {
+            //viewModel for dashboard
+            val addItemViewModel: AddItemsViewModel = hiltViewModel()
+            val state by addItemViewModel.state.collectAsStateWithLifecycle()
             AddItemsScreen(
                 onBackClickInstance = { navControllerInstance.navigateUp() },
                 paddingValuesInstance = paddingValuesInstance,
-                snackbarHostStateInstanceScreen = snackBarHostStateInstance
+                snackbarHostStateInstanceScreen = snackBarHostStateInstance,
+                state = state,
+                uiEvent = addItemViewModel.uiEvent,
             )
         }
 

@@ -1,18 +1,25 @@
 package com.example.precisepal.data.repository
 
+import android.util.Log
+import com.example.precisepal.data.mapper.BodyPartDTO
 import com.example.precisepal.data.mapper.UserDTO
+import com.example.precisepal.data.mapper.toBodyPart
 import com.example.precisepal.data.mapper.toBodyPartDTO
 import com.example.precisepal.data.mapper.toUser
 import com.example.precisepal.data.util.constants.BODY_PART_COLLECTION
+import com.example.precisepal.data.util.constants.BODY_PART_NAME_FIELD
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
@@ -97,5 +104,30 @@ class DatabaseRepositoryImpl(
             Result.failure(e)
         }
 
+    }
+
+    //get the bodyParts from the DB
+    override fun getAllBodyParts(): Flow<List<BodyPart>> {
+        return flow {
+            try {
+                bodyPartCollection()
+                    .orderBy(BODY_PART_NAME_FIELD)
+                    .snapshots()
+                    .collect { snapshot ->
+                        val bodyPartDTOList = snapshot.toObjects(BodyPartDTO::class.java)
+                        emit(bodyPartDTOList.map { it.toBodyPart() })
+                    // Debugging: Log sorted names
+//                        Log.d("Firestore", "Fetched and sorted body parts:")
+//                        bodyPartDTOList.forEach { Log.d("Firestore", "BodyPart: ${it.name}") }
+//                        bodyPartDTOList.forEach { Log.d("Firestore", "BodyPart: $it") }
+
+                    }
+//                bodyPartCollection().snapshots().collect { snapshot ->
+//                    Log.d("Firestore", "Fetched documents: ${snapshot.documents}")
+//                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
     }
 }

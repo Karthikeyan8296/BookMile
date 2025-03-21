@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -54,6 +55,10 @@ import androidx.compose.ui.unit.sp
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.predefinedBodyPart
 import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.util.UIEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -61,7 +66,21 @@ fun AddItemsScreen(
     onBackClickInstance: () -> Unit,
     paddingValuesInstance: PaddingValues,
     snackbarHostStateInstanceScreen: SnackbarHostState,
+    state: AddItemsState,
+    uiEvent: Flow<UIEvent>,
 ) {
+
+    //snack bar
+    LaunchedEffect(key1 = Unit) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                }
+                UIEvent.HideBottomSheet -> {}
+            }
+        }
+    }
     //Add items dialog
     var isDialogAdd by rememberSaveable {
         mutableStateOf(false)
@@ -69,7 +88,7 @@ fun AddItemsScreen(
     }
     MeasureMateDialog(
         body = {
-            OutlinedTextField(value = "", onValueChange = {})
+            OutlinedTextField(value = state.textFieldValue, onValueChange = {})
         },
         title = "Add new item",
         isOpen = isDialogAdd,
@@ -99,13 +118,12 @@ fun AddItemsScreen(
             //if we are implementing single card at top, we can use item!
             //item {}
             //bunch of cards can be defined here, with items!
-            items(predefinedBodyPart) { bodyPart ->
+            items(state.bodyParts) { bodyPart ->
                 ItemCard(
                     name = bodyPart.name,
                     onClick = {},
-                    isChecked = true,
+                    isChecked = bodyPart.isActive,
                     onCheckChange = {},
-                    bodyPartInstance = bodyPart
                 )
             }
         }
@@ -141,7 +159,6 @@ fun TopBar(onAddIconClick: () -> Unit, onBackIconClick: () -> Unit) {
 @Composable
 //the bodyPart is called from the domain
 private fun ItemCard(
-    bodyPartInstance: BodyPart,
     name: String,
     onClick: () -> Unit,
     isChecked: Boolean,
@@ -179,6 +196,8 @@ private fun AddItemsScreenPreview() {
     AddItemsScreen(
         onBackClickInstance = {},
         paddingValuesInstance = PaddingValues(0.dp),
-        snackbarHostStateInstanceScreen = SnackbarHostState()
+        snackbarHostStateInstanceScreen = SnackbarHostState(),
+        state = AddItemsState(bodyParts = predefinedBodyPart),
+        uiEvent = flowOf()
     )
 }
