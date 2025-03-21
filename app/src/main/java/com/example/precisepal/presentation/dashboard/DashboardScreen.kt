@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +62,7 @@ import com.example.precisepal.presentation.theme.PrecisePalTheme
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,12 +87,27 @@ fun DashboardScreen(
 
     val context = LocalContext.current
 
+    //Button sheet state
+    var isProfileSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val preBuildSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
     //snack bar
     LaunchedEffect(key1 = Unit) {
         uiEvent.collect { event ->
             when (event) {
                 is UIEvent.ShowSnackBar -> {
                     snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                }
+
+                UIEvent.HideBottomSheet -> {
+                    scope.launch { preBuildSheetState.hide() }.invokeOnCompletion {
+                        if (!preBuildSheetState.isVisible) {
+                            isProfileSheetOpen = false
+                        }
+                    }
                 }
             }
         }
@@ -113,23 +130,20 @@ fun DashboardScreen(
         confirmButtonText = "Yes",
         dismissButtonText = "No"
     )
-    //Button sheet state
-    var isProfileSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
 
+    //bottom sheet
     val isUserAnonymous = state.user?.isAnonymous ?: true
 
     ProfileBottomSheet(
         onDismiss = { isProfileSheetOpen = false },
         isOpen = isProfileSheetOpen,
-        sheetState = rememberModalBottomSheetState(),
+        sheetState = preBuildSheetState,
         buttonPrimaryText = if (isUserAnonymous) "Sign In with google" else "Sign Out from Google",
         buttonLoadingState = if (isUserAnonymous) state.isSignInButtonLoading else state.isSignOutButtonLoading,
         onButtonClick = {
             if (isUserAnonymous) {
-                onEvent(DashboardEvents.AnonymousUserSignInWithGoogle(context))
-//                onEvent(DashboardEvents.SignOut)
+//                onEvent(DashboardEvents.AnonymousUserSignInWithGoogle(context))
+                onEvent(DashboardEvents.SignOut)
             } else {
                 isDialogSignOut = true
             }

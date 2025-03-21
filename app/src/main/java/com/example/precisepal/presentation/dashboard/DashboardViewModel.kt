@@ -66,9 +66,11 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.signOut()
                 .onSuccess {
+                    _uiEvent.send(UIEvent.HideBottomSheet)
                     _uiEvent.send(UIEvent.ShowSnackBar("Sign Out Successfully"))
                 }
                 .onFailure { e ->
+                    _uiEvent.send(UIEvent.HideBottomSheet)
                     _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign out. please try again later ${e.message}"))
                 }
         }
@@ -82,13 +84,16 @@ class DashboardViewModel @Inject constructor(
                     //firebase user collection - storing the user in database
                     databaseRepository.addUser()
                         .onSuccess {
+                            _uiEvent.send(UIEvent.HideBottomSheet)
                             _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
                         }
                         .onFailure { e ->
+                            _uiEvent.send(UIEvent.HideBottomSheet)
                             _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
                         }
                 }
                 .onFailure { e ->
+                    _uiEvent.send(UIEvent.HideBottomSheet)
                     _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign in. please try again later ${e.message}"))
                     Log.d("SignInViewModel", "Google signIn error: ${e.message}")
                 }

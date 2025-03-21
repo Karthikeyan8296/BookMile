@@ -7,4 +7,5 @@ object constants {
 
 //    firestore collection name
     const val USERS_COLLECTION = "users"
+    const val BODY_PART_COLLECTION = "bodyPart"
 }

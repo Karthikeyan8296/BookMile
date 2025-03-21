@@ -42,6 +42,8 @@ fun NavGraph(
                 is UIEvent.ShowSnackBar -> {
                     snackBarHostStateInstance.showSnackbar(event.message)
                 }
+
+                UIEvent.HideBottomSheet -> {}
             }
         }
     }

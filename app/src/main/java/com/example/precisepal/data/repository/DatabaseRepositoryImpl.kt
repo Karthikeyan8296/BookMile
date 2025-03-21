@@ -1,8 +1,11 @@
 package com.example.precisepal.data.repository
 
 import com.example.precisepal.data.mapper.UserDTO
+import com.example.precisepal.data.mapper.toBodyPartDTO
 import com.example.precisepal.data.mapper.toUser
+import com.example.precisepal.data.util.constants.BODY_PART_COLLECTION
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
+import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +24,13 @@ class DatabaseRepositoryImpl(
     //firebase user collection - creating an collection named "user"
     private fun userCollection(): CollectionReference {
         return firestore.collection(USERS_COLLECTION)
+    }
+
+    //firebase body collection - creating an collection named "bodypart"
+    private fun bodyPartCollection(userID: String = firebaseAuth.currentUser?.uid.orEmpty()): CollectionReference {
+        return firestore.collection(USERS_COLLECTION)
+            .document(userID)
+            .collection(BODY_PART_COLLECTION)
     }
 
     //storing the user in the database
@@ -55,20 +65,37 @@ class DatabaseRepositoryImpl(
 
     //getting the user names from the firestore and show in UI, from the user mapper function
     override fun getSignInUserName(): Flow<User?> {
-        return flow{
+        return flow {
             try {
                 val userID = firebaseAuth.currentUser?.uid ?: ""
                 userCollection()
                     .document(userID)
                     .snapshots()
-                    .collect{ snapshot ->
+                    .collect { snapshot ->
                         val userDTO = snapshot.toObject(UserDTO::class.java)
                         emit(userDTO?.toUser())
                     }
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 throw e
             }
         }
+    }
+
+    //insert and update the body part in the database
+    override suspend fun upsertBodyPort(bodyPart: BodyPart): Result<Boolean> {
+        return try {
+            //if we edit the existing body part, then it will edit that id only, will not create new one
+            val documentID = bodyPart.bodyPartId ?: bodyPartCollection().document().id
+            //we are setting the bodypart id to the bodypartDTO as Document ID
+            val bodyPartDTO = bodyPart.toBodyPartDTO().copy(bodyPartId = documentID)
+            bodyPartCollection()
+                .document(documentID)
+                .set(bodyPartDTO)
+                .await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.precisepal.domain.model.AuthStatus
+import com.example.precisepal.domain.model.predefinedBodyPart
 import com.example.precisepal.domain.repository.AuthRepository
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
@@ -95,6 +96,13 @@ class SignInViewModel @Inject constructor(
                     if (isNewUser) {
                         databaseRepository.addUser()
                             .onSuccess {
+                                //inserting the predefined values in the DB
+                                try {
+                                    insertPredefinedBodyPartValues()
+                                    _uiEvent.send(UIEvent.ShowSnackBar("Predefined Body Part Values Inserted Successfully"))
+                                } catch (e: Exception) {
+                                    _uiEvent.send(UIEvent.ShowSnackBar("failed to insert in DB ${e.message}"))
+                                }
                                 _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
                             }
                             .onFailure { e ->
@@ -109,6 +117,12 @@ class SignInViewModel @Inject constructor(
                     Log.d("SignInViewModel", "Google signIn error: ${e.message}")
                 }
             _state.update { it.copy(isGoogleSignInButtonLoading = false) }
+        }
+    }
+
+    private suspend fun insertPredefinedBodyPartValues() {
+        predefinedBodyPart.forEach { bodyPart ->
+            databaseRepository.upsertBodyPort(bodyPart)
         }
     }
 }
