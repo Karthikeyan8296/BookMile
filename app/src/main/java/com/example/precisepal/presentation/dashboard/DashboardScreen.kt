@@ -119,21 +119,24 @@ fun DashboardScreen(
     }
 
     val isUserAnonymous = state.user?.isAnonymous ?: true
+
     ProfileBottomSheet(
         onDismiss = { isProfileSheetOpen = false },
         isOpen = isProfileSheetOpen,
         sheetState = rememberModalBottomSheetState(),
-        buttonPrimaryText = if (isUserAnonymous) "Sign In with Google" else "Sign Out with Google",
-        buttonLoadingState = if (isUserAnonymous) state.isSignOutButtonLoading else state.isSignOutButtonLoading,
+        buttonPrimaryText = if (isUserAnonymous) "Sign In with google" else "Sign Out from Google",
+        buttonLoadingState = if (isUserAnonymous) state.isSignInButtonLoading else state.isSignOutButtonLoading,
         onButtonClick = {
-            if (isUserAnonymous) onEvent(
-                DashboardEvents.AnonymousUserSignInWithGoogle(
-                    context
-                )
-            ) else isDialogSignOut = true
+            if (isUserAnonymous) {
+                onEvent(DashboardEvents.AnonymousUserSignInWithGoogle(context))
+//                onEvent(DashboardEvents.SignOut)
+            } else {
+                isDialogSignOut = true
+            }
         },
         userInstance = state.user
     )
+
 
     //Main Screen UI
     Box(

@@ -58,6 +58,30 @@ class AuthRepositoryImpl(
         }
     }
 
+    //Anonymous user sign in with google function
+    override suspend fun anonymousUserSignInWithGoogle(context: Context): Result<Boolean> {
+        return try {
+            val authCredentialResult = getGoogleAuthCredentials(context)
+//            sign-in with google firebase setup
+            if (authCredentialResult.isSuccess) {
+                val authCredential = authCredentialResult.getOrNull()
+                if (authCredential != null) {
+//                    val authResult = firebaseAuth.signInWithCredential(authCredential).await()
+//                    //check if the user is New or Not
+//                    val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+                    firebaseAuth.currentUser?.linkWithCredential(authCredential)?.await()
+                    Result.success(true)
+                } else {
+                    Result.failure(IllegalArgumentException("authCredential is null"))
+                }
+            } else {
+                Result.failure(authCredentialResult.exceptionOrNull() ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     //sign in with google
     override suspend fun signInWithGoogle(context: Context): Result<Boolean> {
         return try {

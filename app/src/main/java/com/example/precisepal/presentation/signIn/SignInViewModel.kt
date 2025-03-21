@@ -68,6 +68,14 @@ class SignInViewModel @Inject constructor(
             _state.update { it.copy(isAnonymousSignInButtonLoading = true) }
             authRepository.signInAnonymously()
                 .onSuccess {
+                    //Adding the Anonymous user in the database
+                    databaseRepository.addUser()
+                        .onSuccess {
+                            _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
+                        }
+                        .onFailure { e ->
+                            _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
+                        }
                     _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully"))
                 }
                 .onFailure { e ->
