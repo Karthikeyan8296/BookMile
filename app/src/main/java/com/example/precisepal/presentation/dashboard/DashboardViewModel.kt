@@ -67,6 +67,7 @@ class DashboardViewModel @Inject constructor(
 
     private fun signOut() {
         viewModelScope.launch {
+            _state.update { it.copy(isSignOutButtonLoading = true) }
             authRepository.signOut()
                 .onSuccess {
                     _uiEvent.send(UIEvent.HideBottomSheet)
@@ -76,6 +77,7 @@ class DashboardViewModel @Inject constructor(
                     _uiEvent.send(UIEvent.HideBottomSheet)
                     _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign out. please try again later ${e.message}"))
                 }
+            _state.update { it.copy(isSignOutButtonLoading = false) }
         }
     }
 

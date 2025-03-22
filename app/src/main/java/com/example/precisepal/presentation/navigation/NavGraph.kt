@@ -23,6 +23,7 @@ import com.example.precisepal.presentation.dashboard.DashboardScreen
 import com.example.precisepal.presentation.dashboard.DashboardState
 import com.example.precisepal.presentation.dashboard.DashboardViewModel
 import com.example.precisepal.presentation.details.DetailsScreen
+import com.example.precisepal.presentation.details.DetailsViewModel
 import com.example.precisepal.presentation.signIn.SignInScreen
 import com.example.precisepal.presentation.signIn.SignInViewModel
 import com.example.precisepal.presentation.util.UIEvent
@@ -114,6 +115,7 @@ fun NavGraph(
                 snackbarHostStateInstanceScreen = snackBarHostStateInstance,
                 state = state,
                 uiEvent = addItemViewModel.uiEvent,
+                onEvent = addItemViewModel::onEvent
             )
         }
 
@@ -130,13 +132,16 @@ fun NavGraph(
                 )
             }) { navBackStackEntry ->
             //we are passing the bodyPartID
-            val bodyPartID = navBackStackEntry.toRoute<Routes.DetailsScreen>().bodyPartId
+            //val bodyPartID = navBackStackEntry.toRoute<Routes.DetailsScreen>().bodyPartId
+            val detailsViewModel : DetailsViewModel = hiltViewModel()
+            val state by detailsViewModel.state.collectAsStateWithLifecycle()
             DetailsScreen(
                 windowSizeInstance = windowSize.widthSizeClass,
-                bodyPartIDInstance = bodyPartID,
+//                bodyPartIDInstance = bodyPartID,
                 onBackClickInstance = { navControllerInstance.navigateUp() },
                 paddingValuesInstance = paddingValuesInstance,
-                snackbarHostStateInstanceScreen = snackBarHostStateInstance
+                snackbarHostStateInstanceScreen = snackBarHostStateInstance,
+                state = state
             )
         }
     }

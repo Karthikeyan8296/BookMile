@@ -87,10 +87,11 @@ import java.time.LocalDate
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     windowSizeInstance: WindowWidthSizeClass,
-    bodyPartIDInstance: String,
     onBackClickInstance: () -> Unit,
     paddingValuesInstance: PaddingValues,
-    snackbarHostStateInstanceScreen: SnackbarHostState
+    state: DetailsState,
+    snackbarHostStateInstanceScreen: SnackbarHostState,
+    bodyPartIDInstance: String = "",
 ) {
     //Dialog
     var isDeleteDialogOpen by rememberSaveable {
@@ -158,13 +159,14 @@ fun DetailsScreen(
         onDismissReq = { isDatePickerOpen = false },
         state = datePickerState
     )
-    val dummyBodyPart = BodyPart(
-        name = "Shoulder: $bodyPartIDInstance",
-        measuringUnit = "cm",
-        isActive = true,
-        bodyPartId = "xxx",
-        latestValue = null
-    )
+
+//    val dummyBodyPart = BodyPart(
+//        name = "Shoulder",
+//        measuringUnit = "cm",
+//        isActive = true,
+//        bodyPartId = "xxx",
+//        latestValue = null
+//    )
 
     when (windowSizeInstance) {
         WindowWidthSizeClass.Compact -> {
@@ -188,7 +190,7 @@ fun DetailsScreen(
                         onDeleteIconClick = { isDeleteDialogOpen = true },
                         onBackIconClick = { onBackClickInstance() },
                         onUnitIconClick = { isBottomSheetOpen = true },
-                        bodyPartInstance = dummyBodyPart
+                        bodyPartInstance = state.bodyPart
                     )
                     //toggle button component
                     ChartTimeRangeButton(
@@ -237,6 +239,7 @@ fun DetailsScreen(
                 )
             }
         }
+
         else -> {
             Column(
                 modifier = modifier
@@ -248,7 +251,7 @@ fun DetailsScreen(
                     onDeleteIconClick = { isDeleteDialogOpen = true },
                     onBackIconClick = {},
                     onUnitIconClick = { isBottomSheetOpen = true },
-                    bodyPartInstance = dummyBodyPart
+                    bodyPartInstance = state.bodyPart
                 )
                 Row(modifier = modifier.fillMaxSize()) {
                     Column(
@@ -339,7 +342,7 @@ fun DetailsTopBar(
     bodyPartInstance: BodyPart?,
 ) {
     TopAppBar(
-        windowInsets = WindowInsets(0, 0, 0 , 0),
+        windowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.fillMaxWidth(),
         title = {
             Text(
@@ -574,6 +577,7 @@ private fun DetailsScreenPreview() {
         bodyPartIDInstance = "",
         onBackClickInstance = {},
         paddingValuesInstance = PaddingValues(0.dp),
-        snackbarHostStateInstanceScreen = SnackbarHostState()
+        snackbarHostStateInstanceScreen = SnackbarHostState(),
+        state = DetailsState()
     )
 }

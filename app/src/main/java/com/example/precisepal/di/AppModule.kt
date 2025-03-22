@@ -50,14 +50,17 @@ object AppModule {
     //fire base firestore
     @Provides
     @Singleton
-    fun provideFirestore(): FirebaseFirestore {
+    fun provideFireStore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
 
     @Provides
     @Singleton
     //we use provide as prefix to the function
-    fun provideDataBaseRepository(firebaseAuth: FirebaseAuth, firestore: FirebaseFirestore): DatabaseRepository {
-        return DatabaseRepositoryImpl(firebaseAuth, firestore)
+    fun provideDataBaseRepository(
+        firebaseAuth: FirebaseAuth,
+        firebaseFireStore: FirebaseFirestore,
+    ): DatabaseRepository {
+        return DatabaseRepositoryImpl(firebaseAuth, firebaseFireStore)
     }
 }

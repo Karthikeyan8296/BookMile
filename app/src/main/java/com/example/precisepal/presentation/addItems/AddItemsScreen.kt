@@ -67,6 +67,7 @@ fun AddItemsScreen(
     paddingValuesInstance: PaddingValues,
     snackbarHostStateInstanceScreen: SnackbarHostState,
     state: AddItemsState,
+    onEvent: (AddItemEvent) -> Unit,
     uiEvent: Flow<UIEvent>,
 ) {
 
@@ -77,6 +78,7 @@ fun AddItemsScreen(
                 is UIEvent.ShowSnackBar -> {
                     snackbarHostStateInstanceScreen.showSnackbar(event.message)
                 }
+
                 UIEvent.HideBottomSheet -> {}
             }
         }
@@ -88,12 +90,20 @@ fun AddItemsScreen(
     }
     MeasureMateDialog(
         body = {
-            OutlinedTextField(value = state.textFieldValue, onValueChange = {})
+            OutlinedTextField(
+                value = state.textFieldValue,
+                onValueChange = { onEvent(AddItemEvent.OnTextFieldValueChange(it)) })
         },
-        title = "Add new item",
+        title = "Add/Update new item",
         isOpen = isDialogAdd,
-        onDismiss = { isDialogAdd = false },
-        onConfirm = { isDialogAdd = false },
+        onDismiss = {
+            isDialogAdd = false
+            onEvent(AddItemEvent.onAddItemDialogDismiss)
+        },
+        onConfirm = {
+            isDialogAdd = false
+            onEvent(AddItemEvent.UpsertItem)
+        },
         confirmButtonText = "Save",
         dismissButtonText = null
     )
@@ -121,9 +131,12 @@ fun AddItemsScreen(
             items(state.bodyParts) { bodyPart ->
                 ItemCard(
                     name = bodyPart.name,
-                    onClick = {},
+                    onClick = {
+                        isDialogAdd = true
+                        onEvent(AddItemEvent.OnItemClick(bodyPart))
+                    },
                     isChecked = bodyPart.isActive,
-                    onCheckChange = {},
+                    onCheckChange = { onEvent(AddItemEvent.onItemIsActiveChange(bodyPart)) },
                 )
             }
         }
@@ -198,6 +211,7 @@ private fun AddItemsScreenPreview() {
         paddingValuesInstance = PaddingValues(0.dp),
         snackbarHostStateInstanceScreen = SnackbarHostState(),
         state = AddItemsState(bodyParts = predefinedBodyPart),
-        uiEvent = flowOf()
+        uiEvent = flowOf(),
+        onEvent = {}
     )
 }

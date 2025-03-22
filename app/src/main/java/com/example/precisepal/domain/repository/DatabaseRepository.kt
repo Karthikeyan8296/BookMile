@@ -20,4 +20,7 @@ interface DatabaseRepository {
 
     //get all bodyParts from the firestore DB
     fun getAllBodyParts() : Flow<List<BodyPart>>
+
+    //get the bodyPart for the details screen
+    fun getBodyPart(bodyPartId: String) : Flow<BodyPart?>
 }

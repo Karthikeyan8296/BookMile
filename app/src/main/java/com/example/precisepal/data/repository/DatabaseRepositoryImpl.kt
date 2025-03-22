@@ -1,6 +1,5 @@
 package com.example.precisepal.data.repository
 
-import android.util.Log
 import com.example.precisepal.data.mapper.BodyPartDTO
 import com.example.precisepal.data.mapper.UserDTO
 import com.example.precisepal.data.mapper.toBodyPart
@@ -12,30 +11,27 @@ import com.example.precisepal.data.util.constants.USERS_COLLECTION
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class DatabaseRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
+    private val firebaseFireStore: FirebaseFirestore,
 ) : DatabaseRepository {
 
     //firebase user collection - creating an collection named "user"
     private fun userCollection(): CollectionReference {
-        return firestore.collection(USERS_COLLECTION)
+        return firebaseFireStore.collection(USERS_COLLECTION)
     }
 
     //firebase body collection - creating an collection named "bodypart"
     private fun bodyPartCollection(userID: String = firebaseAuth.currentUser?.uid.orEmpty()): CollectionReference {
-        return firestore.collection(USERS_COLLECTION)
+        return firebaseFireStore.collection(USERS_COLLECTION)
             .document(userID)
             .collection(BODY_PART_COLLECTION)
     }
@@ -116,7 +112,7 @@ class DatabaseRepositoryImpl(
                     .collect { snapshot ->
                         val bodyPartDTOList = snapshot.toObjects(BodyPartDTO::class.java)
                         emit(bodyPartDTOList.map { it.toBodyPart() })
-                    // Debugging: Log sorted names
+                        // Debugging: Log sorted names
 //                        Log.d("Firestore", "Fetched and sorted body parts:")
 //                        bodyPartDTOList.forEach { Log.d("Firestore", "BodyPart: ${it.name}") }
 //                        bodyPartDTOList.forEach { Log.d("Firestore", "BodyPart: $it") }
@@ -125,6 +121,23 @@ class DatabaseRepositoryImpl(
 //                bodyPartCollection().snapshots().collect { snapshot ->
 //                    Log.d("Firestore", "Fetched documents: ${snapshot.documents}")
 //                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+    //get the specific bodyPart for details screen
+    override fun getBodyPart(bodyPartId: String): Flow<BodyPart?> {
+        return flow {
+            try {
+                bodyPartCollection()
+                    .document(bodyPartId)
+                    .snapshots()
+                    .collect { snapshot ->
+                        val bodyPartDTO = snapshot.toObject(BodyPartDTO::class.java)
+                        emit(bodyPartDTO?.toBodyPart())
+                    }
             } catch (e: Exception) {
                 throw e
             }
