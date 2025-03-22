@@ -80,6 +80,7 @@ fun AddItemsScreen(
                 }
 
                 UIEvent.HideBottomSheet -> {}
+                UIEvent.NavigateBack -> {}
             }
         }
     }

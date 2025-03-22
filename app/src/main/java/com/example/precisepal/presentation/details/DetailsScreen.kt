@@ -14,15 +14,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,22 +30,19 @@ import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material3.Card
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,8 +57,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.precisepal.domain.model.BodyPart
@@ -75,9 +67,12 @@ import com.example.precisepal.presentation.components.MeasureMateDialog
 import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
 import com.example.precisepal.presentation.components.NewValueInputBar
 import com.example.precisepal.presentation.components.datePicker
+import com.example.precisepal.presentation.util.UIEvent
 import com.example.precisepal.presentation.util.changeLocalDateToFullDate
 import com.example.precisepal.presentation.util.changeMillisToGraphDate
 import com.example.precisepal.presentation.util.pastOrPresentSelectableDates
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -90,9 +85,27 @@ fun DetailsScreen(
     onBackClickInstance: () -> Unit,
     paddingValuesInstance: PaddingValues,
     state: DetailsState,
+    onEvent: (DetailsEvent) -> Unit,
+    uiEvent: Flow<UIEvent>,
     snackbarHostStateInstanceScreen: SnackbarHostState,
     bodyPartIDInstance: String = "",
 ) {
+    //snack bar
+    LaunchedEffect(key1 = Unit) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                }
+
+                UIEvent.HideBottomSheet -> {}
+                UIEvent.NavigateBack -> {
+                    onBackClickInstance()
+                }
+            }
+        }
+    }
+
     //Dialog
     var isDeleteDialogOpen by rememberSaveable {
         mutableStateOf(false)
@@ -100,7 +113,10 @@ fun DetailsScreen(
     MeasureMateDialog(
         isOpen = isDeleteDialogOpen,
         onDismiss = { isDeleteDialogOpen = false },
-        onConfirm = { isDeleteDialogOpen = false },
+        onConfirm = {
+            isDeleteDialogOpen = false
+            onEvent(DetailsEvent.DeleteBodyPart)
+        },
         title = "delete Body Part",
         body = { Text("Are you sure, want to delete?") },
         confirmButtonText = "Delete",
@@ -117,12 +133,13 @@ fun DetailsScreen(
         isOpen = isBottomSheetOpen,
         onDismiss = { isBottomSheetOpen = false },
         //this will update the state and close the bottom sheet too!
-        onItemClicked = {
+        onItemClicked = { measuringUnit ->
             scope.launch { preBuildSheetState.hide() }.invokeOnCompletion {
                 if (!preBuildSheetState.isVisible) {
                     isBottomSheetOpen = false
                 }
             }
+            onEvent(DetailsEvent.ChangeMeasuringUnit(measuringUnit))
         }
     )
 
@@ -578,6 +595,8 @@ private fun DetailsScreenPreview() {
         onBackClickInstance = {},
         paddingValuesInstance = PaddingValues(0.dp),
         snackbarHostStateInstanceScreen = SnackbarHostState(),
-        state = DetailsState()
+        state = DetailsState(),
+        onEvent = {},
+        uiEvent = flowOf()
     )
 }

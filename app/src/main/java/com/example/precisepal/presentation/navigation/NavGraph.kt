@@ -46,6 +46,7 @@ fun NavGraph(
                 }
 
                 UIEvent.HideBottomSheet -> {}
+                UIEvent.NavigateBack -> {}
             }
         }
     }
@@ -133,7 +134,7 @@ fun NavGraph(
             }) { navBackStackEntry ->
             //we are passing the bodyPartID
             //val bodyPartID = navBackStackEntry.toRoute<Routes.DetailsScreen>().bodyPartId
-            val detailsViewModel : DetailsViewModel = hiltViewModel()
+            val detailsViewModel: DetailsViewModel = hiltViewModel()
             val state by detailsViewModel.state.collectAsStateWithLifecycle()
             DetailsScreen(
                 windowSizeInstance = windowSize.widthSizeClass,
@@ -141,7 +142,9 @@ fun NavGraph(
                 onBackClickInstance = { navControllerInstance.navigateUp() },
                 paddingValuesInstance = paddingValuesInstance,
                 snackbarHostStateInstanceScreen = snackBarHostStateInstance,
-                state = state
+                state = state,
+                onEvent = detailsViewModel::onEvent,
+                uiEvent = detailsViewModel.uiEvent
             )
         }
     }

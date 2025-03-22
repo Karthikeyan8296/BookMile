@@ -18,6 +18,7 @@ import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlin.contracts.Returns
 
 class DatabaseRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
@@ -141,6 +142,19 @@ class DatabaseRepositoryImpl(
             } catch (e: Exception) {
                 throw e
             }
+        }
+    }
+
+    //delete the body part from details screen
+    override suspend fun deleteBodyPart(bodyPartID: String): Result<Boolean> {
+        return try {
+            bodyPartCollection()
+                .document(bodyPartID)
+                .delete()
+                .await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

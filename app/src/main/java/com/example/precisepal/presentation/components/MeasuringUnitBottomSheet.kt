@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,12 +29,13 @@ fun MeasureUnitBottomSheet(
     onDismiss: () -> Unit,
     isOpen: Boolean,
     preBuildSheetState: SheetState,
-    onItemClicked: () -> Unit,
+    onItemClicked: (MeasuringUnit) -> Unit,
 ) {
     //this state will open the full bottom sheet
     if (isOpen) {
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
+            sheetState = preBuildSheetState,
             dragHandle = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -61,7 +61,7 @@ fun MeasureUnitBottomSheet(
                 items(MeasuringUnit.entries){unit ->
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onItemClicked() }
+                        .clickable { onItemClicked(unit) }
                         .padding(vertical = 12.dp, horizontal = 16.dp)) {
                         Text(
                             text = "${unit.code} - ${unit.label}",

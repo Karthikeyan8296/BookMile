@@ -110,6 +110,7 @@ fun DashboardScreen(
                         }
                     }
                 }
+                UIEvent.NavigateBack -> TODO()
             }
         }
     }
