@@ -7,9 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.BodyPartValues
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.navigation.Routes
 import com.example.precisepal.presentation.util.UIEvent
+import com.example.precisepal.presentation.util.changeMillisToGraphDate
+import com.example.precisepal.presentation.util.toFloatValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,7 +62,16 @@ class DetailsViewModel @Inject constructor(
     fun onEvent(event: DetailsEvent) {
         when (event) {
             DetailsEvent.AddNewValue -> {
-                TODO()
+                val state = state.value
+                val id = state.allBodyPartValues.find { it.date == state.date }?.bodyPartValueID
+                val bodyPartValues = BodyPartValues(
+                    value = state.textFieldValue.toFloatValue(decimalPlace = 2),
+                    date = state.date,
+                    bodyPartId = bodyPartID,
+                    bodyPartValueID = id
+                )
+                upsertBodyPartValue(bodyPartValues)
+                _state.update { it.copy(textFieldValue = "") }
             }
 
             DetailsEvent.DeleteBodyPart -> {
@@ -74,8 +87,17 @@ class DetailsViewModel @Inject constructor(
             }
 
             is DetailsEvent.DeleteBodyPartValue -> TODO()
-            is DetailsEvent.OnDateChange -> TODO()
-            is DetailsEvent.OnTextFieldValueChange -> TODO()
+            is DetailsEvent.OnDateChange -> {
+                val date = event.millis.changeMillisToGraphDate()
+                _state.update { it.copy(date = date) }
+            }
+
+            is DetailsEvent.OnTextFieldValueChange -> {
+                _state.update {
+                    it.copy(textFieldValue = event.value)
+                }
+            }
+
             is DetailsEvent.OnTimeRangeChange -> TODO()
 
         }
@@ -102,6 +124,19 @@ class DetailsViewModel @Inject constructor(
                 .onSuccess {
                     _uiEvent.send(UIEvent.NavigateBack)
                     _uiEvent.send(UIEvent.ShowSnackBar("Deleted successfully!"))
+                }
+                .onFailure {
+                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                }
+        }
+    }
+
+    private fun upsertBodyPartValue(bodyPartValues: BodyPartValues?) {
+        viewModelScope.launch {
+            bodyPartValues ?: return@launch
+            databaseRepository.upsertBodyPartValues(bodyPartValues)
+                .onSuccess {
+                    _uiEvent.send(UIEvent.ShowSnackBar("Body Part Value saved!"))
                 }
                 .onFailure {
                     _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))

@@ -8,6 +8,7 @@ object constants {
     //firestore collection name
     const val USERS_COLLECTION = "users"
     const val BODY_PART_COLLECTION = "bodyPart"
+    const val BODY_PART_VALUES_COLLECTION = "bodyPartValues"
 
     //body part field ref
     const val BODY_PART_NAME_FIELD = "name"

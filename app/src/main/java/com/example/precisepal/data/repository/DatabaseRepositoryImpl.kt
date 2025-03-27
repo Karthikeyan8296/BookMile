@@ -4,11 +4,14 @@ import com.example.precisepal.data.mapper.BodyPartDTO
 import com.example.precisepal.data.mapper.UserDTO
 import com.example.precisepal.data.mapper.toBodyPart
 import com.example.precisepal.data.mapper.toBodyPartDTO
+import com.example.precisepal.data.mapper.toBodyPartValueDTO
 import com.example.precisepal.data.mapper.toUser
 import com.example.precisepal.data.util.constants.BODY_PART_COLLECTION
 import com.example.precisepal.data.util.constants.BODY_PART_NAME_FIELD
+import com.example.precisepal.data.util.constants.BODY_PART_VALUES_COLLECTION
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
 import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.BodyPartValues
 import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -30,11 +33,26 @@ class DatabaseRepositoryImpl(
         return firebaseFireStore.collection(USERS_COLLECTION)
     }
 
-    //firebase body collection - creating an collection named "bodypart"
-    private fun bodyPartCollection(userID: String = firebaseAuth.currentUser?.uid.orEmpty()): CollectionReference {
+    //firebase body part collection - creating an collection named "bodyPart"
+    private fun bodyPartCollection(
+        userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
+    ): CollectionReference {
         return firebaseFireStore.collection(USERS_COLLECTION)
             .document(userID)
             .collection(BODY_PART_COLLECTION)
+    }
+
+    //firebase body part value collection - creating an collection named "bodyPartValue"
+    private fun bodyPartValueCollection(
+        bodyPartID: String,
+        userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
+    ): CollectionReference {
+        return firebaseFireStore
+            .collection(USERS_COLLECTION)
+            .document(userID)
+            .collection(BODY_PART_COLLECTION)
+            .document(bodyPartID)
+            .collection(BODY_PART_VALUES_COLLECTION)
     }
 
     //storing the user in the database
@@ -151,6 +169,24 @@ class DatabaseRepositoryImpl(
             bodyPartCollection()
                 .document(bodyPartID)
                 .delete()
+                .await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    //update and insert the body part values
+    override suspend fun upsertBodyPartValues(bodyPartValues: BodyPartValues): Result<Boolean> {
+        return try {
+            val bodyPartValueCollection =
+                bodyPartValueCollection(bodyPartValues.bodyPartId.orEmpty())
+            val documentID = bodyPartValues.bodyPartValueID ?: bodyPartValueCollection.document().id
+            val bodyPartValueDTO =
+                bodyPartValues.toBodyPartValueDTO().copy(bodyPartValueID = documentID)
+            bodyPartValueCollection
+                .document(documentID)
+                .set(bodyPartValueDTO)
                 .await()
             Result.success(true)
         } catch (e: Exception) {

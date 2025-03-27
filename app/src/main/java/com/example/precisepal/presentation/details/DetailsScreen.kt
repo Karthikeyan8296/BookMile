@@ -69,6 +69,7 @@ import com.example.precisepal.presentation.components.NewValueInputBar
 import com.example.precisepal.presentation.components.datePicker
 import com.example.precisepal.presentation.util.UIEvent
 import com.example.precisepal.presentation.util.changeLocalDateToFullDate
+import com.example.precisepal.presentation.util.changeLocalDateToGraphDate
 import com.example.precisepal.presentation.util.changeMillisToGraphDate
 import com.example.precisepal.presentation.util.pastOrPresentSelectableDates
 import kotlinx.coroutines.flow.Flow
@@ -148,9 +149,9 @@ fun DetailsScreen(
     }
 
     //input state
-    var inputValue by remember {
-        mutableStateOf("")
-    }
+//    var inputValue by remember {
+//        mutableStateOf("")
+//    }
     //focus manager - for IME actions
     val focusManager = LocalFocusManager.current
 
@@ -172,7 +173,10 @@ fun DetailsScreen(
     )
     datePicker(
         isOpen = isDatePickerOpen,
-        onConfirm = { isDatePickerOpen = false },
+        onConfirm = {
+            isDatePickerOpen = false
+            onEvent(DetailsEvent.OnDateChange(millis = datePickerState.selectedDateMillis))
+        },
         onDismissReq = { isDatePickerOpen = false },
         state = datePickerState
     )
@@ -234,12 +238,16 @@ fun DetailsScreen(
                 //input field
                 NewValueInputBar(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    value = inputValue,
+                    value = state.textFieldValue,
                     //it will display the date over here
-                    date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
-                        .changeLocalDateToFullDate(),
-                    onDoneClick = {},
-                    onValueChange = { inputValue = it },
+//                    date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
+//                        .changeLocalDateToFullDate(),
+                    date = state.date.changeLocalDateToFullDate(),
+                    onDoneClick = {
+                        focusManager.clearFocus()
+                        onEvent(DetailsEvent.AddNewValue)
+                    },
+                    onValueChange = { onEvent(DetailsEvent.OnTextFieldValueChange(it)) },
                     onCalenderIconClick = { isDatePickerOpen = true },
                     onDoneImeActionClick = {
                         focusManager.clearFocus()
@@ -306,12 +314,14 @@ fun DetailsScreen(
                         //input field
                         NewValueInputBar(
                             modifier = Modifier.align(Alignment.BottomCenter),
-                            value = inputValue,
+                            value = state.textFieldValue,
                             //it will display the date over here
-                            date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
-                                .changeLocalDateToFullDate(),
-                            onDoneClick = {},
-                            onValueChange = { inputValue = it },
+                            date = state.date.changeLocalDateToFullDate(),
+                            onDoneClick = {
+                                focusManager.clearFocus()
+                                onEvent(DetailsEvent.AddNewValue)
+                            },
+                            onValueChange = { onEvent(DetailsEvent.OnTextFieldValueChange(it)) },
                             onCalenderIconClick = { isDatePickerOpen = true },
                             onDoneImeActionClick = {
                                 focusManager.clearFocus()

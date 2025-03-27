@@ -64,7 +64,7 @@ fun Long?.changeMillisToGraphDate(): LocalDate {
 //we are getting that interface
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
-object pastOrPresentSelectableDates: SelectableDates{
+object pastOrPresentSelectableDates : SelectableDates {
     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
         return utcTimeMillis <= System.currentTimeMillis()
     }
@@ -72,4 +72,11 @@ object pastOrPresentSelectableDates: SelectableDates{
     override fun isSelectableYear(year: Int): Boolean {
         return year <= LocalDate.now().year
     }
+}
+
+//convert string to float
+fun String.toFloatValue(decimalPlace: Int = 1): Float {
+    val multiplier = 10.0.pow(decimalPlace)
+    val value = this.toFloatOrNull() ?: 0f
+    return (value * multiplier).roundToInt() / multiplier.toFloat()
 }

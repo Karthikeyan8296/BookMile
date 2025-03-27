@@ -77,7 +77,7 @@ dependencies {
     //Coil - best version
     implementation("io.coil-kt:coil-compose:2.6.0")
     //navigation
-    val nav_version = "2.8.6"
+    val nav_version = "2.8.9"
     implementation("androidx.navigation:navigation-compose:$nav_version")
     //kotlin serialization for navigation
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
@@ -99,5 +99,5 @@ dependencies {
     // optional - needed for credentials support from play services, for devices running
     // Android 13 and below.
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0-rc01")
-    implementation ("com.google.android.libraries.identity.googleid:googleid:<latest version>")
+    implementation (libs.googleid)
 }

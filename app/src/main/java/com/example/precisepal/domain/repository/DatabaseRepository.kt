@@ -1,6 +1,7 @@
 package com.example.precisepal.domain.repository
 
 import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.BodyPartValues
 import com.example.precisepal.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -27,4 +28,7 @@ interface DatabaseRepository {
 
     //delete the body part
     suspend fun deleteBodyPart(bodyPartID: String): Result<Boolean>
+
+    //body part values - graph values
+    suspend fun upsertBodyPartValues(bodyPartValues: BodyPartValues): Result<Boolean>
 }
