@@ -57,7 +57,8 @@ class DashboardViewModel @Inject constructor(
             books = activeBodyParts
         )
     }.catch { e ->
-        _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${e.message}"))
+        Log.d("DashboardViewModel", "error: ${e.message}")
+//        _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${e.message}"))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),

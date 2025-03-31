@@ -73,7 +73,7 @@ fun DashboardScreen(
     uiEvent: Flow<UIEvent>,
     onEvent: (DashboardEvents) -> Unit,
     state: DashboardState,
-    snackbarHostStateInstanceScreen: SnackbarHostState,
+    snackBarHostStateInstanceScreen: SnackbarHostState,
 ) {
     //Dummy data!
 //    val user = User(
@@ -98,7 +98,7 @@ fun DashboardScreen(
         uiEvent.collect { event ->
             when (event) {
                 is UIEvent.ShowSnackBar -> {
-                    snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                    snackBarHostStateInstanceScreen.showSnackbar(event.message)
                 }
 
                 UIEvent.HideBottomSheet -> {
@@ -320,7 +320,7 @@ fun DashboardScreenPreview() {
             onItemCardClicked = {},
             onFabClick = {},
             paddingValuesInstance = PaddingValues(0.dp),
-            snackbarHostStateInstanceScreen = SnackbarHostState(),
+            snackBarHostStateInstanceScreen = SnackbarHostState(),
             uiEvent = flowOf(),
             onEvent = {},
             state = DashboardState(books = predefinedBooks)
