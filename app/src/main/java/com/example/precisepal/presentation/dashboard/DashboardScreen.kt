@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +59,7 @@ import com.example.precisepal.domain.model.predefinedBooks
 import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.components.ProfileBottomSheet
 import com.example.precisepal.presentation.components.ProfilePicPlaceholder
+import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.theme.PrecisePalTheme
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
@@ -170,17 +173,46 @@ fun DashboardScreen(
                 onProfileClicks = { isProfileSheetOpen = true },
                 profilePicURL = state.user?.profilePic
             )
-
-            //responsive lazy layout
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Adaptive(minSize = 300.dp)
-            ) {
-                //if we are implementing single card at top, we can use item!
-                //item {}
-                //bunch of cards can be defined here, with items!
-                items(state.books) { bodyPart ->
-                    ItemCard(bookInstance = bodyPart, onCardClick = onItemCardClicked)
+            if (state.books.isEmpty()) {
+// Show alternative UI when the list is empty or null
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 42.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.home),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = "Grow Your Library – Add a Book ↓",
+                            fontFamily = InterFontFamily,
+                            color = Color(0xFF5863BD),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            } else {
+                //responsive lazy layout
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Adaptive(minSize = 300.dp)
+                ) {
+                    //if we are implementing single card at top, we can use item!
+                    //item {}
+                    //bunch of cards can be defined here, with items!
+                    items(state.books) { bodyPart ->
+                        ItemCard(bookInstance = bodyPart, onCardClick = onItemCardClicked)
+                    }
                 }
             }
         }
@@ -323,7 +355,9 @@ fun DashboardScreenPreview() {
             snackBarHostStateInstanceScreen = SnackbarHostState(),
             uiEvent = flowOf(),
             onEvent = {},
-            state = DashboardState(books = predefinedBooks)
+            state = DashboardState(books = hello)
         )
     }
 }
+
+val hello: List<Book> = emptyList()

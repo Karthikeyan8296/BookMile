@@ -13,7 +13,7 @@ data class DetailsState(
     val textFieldValue: String = "",
     val recentlyDeletedBook: BookDetails? = null,
     val date: LocalDate = LocalDate.now(),
-    val timeRange: TimeRange = TimeRange.LAST_7_DAYS,
+    val timeRange: TimeRange = TimeRange.ALL_TIME,
     val allBookPageValues: List<BookDetails> = emptyList(),
     val graphBookPageValues: List<BookDetails> = emptyList(),
 )

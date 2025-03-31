@@ -97,23 +97,18 @@ fun NewValueInputBar(
                     ) {
                         Text(
                             text = date,
-                            color = Color.Black,
+                            color = Color.Gray,
                             fontFamily = InterFontFamily,
                             letterSpacing = 0.5.sp,
                             fontWeight = FontWeight.Medium
                         )
                         IconButton(
-                            onClick = { onCalenderIconClick() },
-                            colors = IconButtonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Color.Black,
-                                disabledContainerColor = Color.Transparent,
-                                disabledContentColor = Color.Black
-                            )
+                            onClick = { onCalenderIconClick() }
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
-                                contentDescription = "done"
+                                contentDescription = "done",
+                                tint = Color(0xFF5863BD)
                             )
                         }
                     }

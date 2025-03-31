@@ -31,13 +31,13 @@ val predefinedBooks: List<Book> = listOf(
         name = "Deep Work",
         isActive = true,
         progress = ProgressStatus.GOING_WELL.code,
-        currentPage = 150f
+        currentPage = 151f
     ),
     Book(
         name = "The Lean Startup",
         isActive = true,
         progress = ProgressStatus.PLANNING_TO_READ.code,
-        currentPage = 0f
+        currentPage = 130f
     ),
     Book(
         name = "Pragmatic Programmer",
@@ -61,7 +61,7 @@ val predefinedBooks: List<Book> = listOf(
         name = "Eloquent JavaScript",
         isActive = true,
         progress = ProgressStatus.NOT_STARTED_YET.code,
-        currentPage = 0f
+        currentPage = 5f
     ),
     Book(
         name = "The Psychology of Money",
@@ -79,7 +79,7 @@ val predefinedBooks: List<Book> = listOf(
         name = "Zero to One",
         isActive = true,
         progress = ProgressStatus.PLANNING_TO_READ.code,
-        currentPage = 0f
+        currentPage = 12f
     ),
     Book(
         name = "Cracking the Coding Interview",
@@ -97,7 +97,7 @@ val predefinedBooks: List<Book> = listOf(
         name = "Refactoring",
         isActive = true,
         progress = ProgressStatus.NOT_STARTED_YET.code,
-        currentPage = 0f
+        currentPage = 9f
     ),
     Book(
         name = "Soft Skills: The IT Life Manual",

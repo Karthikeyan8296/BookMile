@@ -3,6 +3,7 @@ package com.example.precisepal.presentation.details
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -57,13 +59,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.precisepal.R
 import com.example.precisepal.domain.model.Book
 import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.domain.model.TimeRange
@@ -240,11 +245,41 @@ fun DetailsScreen(
                         bodyPartValueInstance = state.graphBookPageValues
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    HistorySection(
-                        bodyPartInstance = state.allBookPageValues,
-                        onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
-                        measuringUnitCode = state.bookName?.progress
-                    )
+
+                    if (state.allBookPageValues.isEmpty()) {
+                        // Show alternative UI when the list is empty or null
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 42.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.deafult),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit
+                                )
+                                Text(
+                                    text = "Log the Pages You've Read ↓",
+                                    fontFamily = InterFontFamily,
+                                    color = Color(0xFF5863BD),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+
+                    } else {
+                        HistorySection(
+                            bodyPartInstance = state.allBookPageValues,
+                            onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
+                            measuringUnitCode = state.bookName?.progress
+                        )
+                    }
                 }
 
                 //input field
@@ -320,11 +355,42 @@ fun DetailsScreen(
                             .fillMaxHeight()
                             .weight(1f),
                     ) {
-                        HistorySection(
-                            bodyPartInstance = state.allBookPageValues,
-                            onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
-                            measuringUnitCode = state.bookName?.progress
-                        )
+                        if (state.allBookPageValues.isEmpty()) {
+                            // Show alternative UI when the list is empty or null
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.deafult),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(180.dp),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                    Text(
+                                        text = "Log the Pages You've Read ↓",
+                                        fontFamily = InterFontFamily,
+                                        color = Color(0xFF5863BD),
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+
+                        } else {
+                            HistorySection(
+                                bodyPartInstance = state.allBookPageValues,
+                                onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
+                                measuringUnitCode = state.bookName?.progress
+                            )
+                        }
+
                         //input field
                         NewValueInputBar(
                             modifier = Modifier.align(Alignment.BottomCenter),
