@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PrecisePal.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen</item>
-        <item name="postSplashScreenTheme">@style/Theme.PrecisePal</item>
+    <style name="Theme.BookMile.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_rounded</item>
+        <item name="postSplashScreenTheme">@style/Theme.BookMile</item>
+        <item name="subtitle">@string/onboarding_into</item>
+        <item name="subtitleTextColor">@color/black</item>
     </style>
 </resources>

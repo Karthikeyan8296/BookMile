@@ -8,7 +8,7 @@ sealed class DetailsEvent {
     data object DeleteBodyPart: DetailsEvent()
     data object RestoreBodyPart: DetailsEvent()
     data object AddNewValue: DetailsEvent()
-    data class DeleteBodyPartValue(val bodyPartValue: BodyPartValues): DetailsEvent()
+    data class DeleteBodyPartValue(val bodyPartValues: BodyPartValues): DetailsEvent()
     data class ChangeMeasuringUnit(val measuringUnit: MeasuringUnit): DetailsEvent()
     data class OnDateChange(val millis: Long?): DetailsEvent()
     data class OnTextFieldValueChange(val value: String): DetailsEvent()

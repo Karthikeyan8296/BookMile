@@ -29,7 +29,7 @@ fun AnonymouslySignInButton(
     modifier: Modifier,
     loadingState: Boolean = false,
     enableUI: Boolean = false,
-    primaryText: String = "Continue without Login",
+    primaryText: String = "Continue as Guest",
     secondaryText: String = "Processing...",
     onButtonClick: () -> Unit,
 ) {

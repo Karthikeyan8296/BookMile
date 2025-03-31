@@ -4,6 +4,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.googlefonts.Font
 import com.example.precisepal.R
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
@@ -23,6 +25,19 @@ val displayFontFamily = FontFamily(
         googleFont = GoogleFont("Inter"),
         fontProvider = provider,
     )
+)
+
+val InterFontFamily = FontFamily(
+    Font(R.font.inter_18pt_regular, FontWeight.Normal),
+    Font(R.font.inter_18pt_bold, FontWeight.Bold),
+    Font(R.font.inter_18pt_italic, FontWeight.Medium),
+    Font(R.font.inter_18pt_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_18pt_light, FontWeight.Light),
+    Font(R.font.inter_18pt_thin, FontWeight.Thin),
+    Font(R.font.inter_18pt_extrabold, FontWeight.ExtraBold),
+    Font(R.font.inter_18pt_extralight, FontWeight.ExtraLight),
+    Font(R.font.inter_18pt_black, FontWeight.Black),
+    Font(R.font.inter_18pt_medium, FontWeight.Medium),
 )
 
 // Default Material 3 typography values

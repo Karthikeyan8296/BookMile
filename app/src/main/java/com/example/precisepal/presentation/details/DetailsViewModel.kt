@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.TimeRange
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.navigation.Routes
 import com.example.precisepal.presentation.util.UIEvent
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,10 +47,24 @@ class DetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(DetailsState())
     val state = combine(
         _state,
-        databaseRepository.getBodyPart(bodyPartID)
-    ) { state, bodyPart ->
+        databaseRepository.getBodyPart(bodyPartID),
+        databaseRepository.getAllBodyPartValues(bodyPartID)
+    ) { state, bodyPart, bodyPartValues ->
+        val currentDate = LocalDate.now()
+        val last7DaysValues = bodyPartValues.filter { bodyPartValue ->
+            bodyPartValue.date.isAfter(currentDate.minusDays(7))
+        }
+        val last30DaysValues = bodyPartValues.filter { bodyPartValue ->
+            bodyPartValue.date.isAfter(currentDate.minusDays(30))
+        }
         state.copy(
-            bodyPart = bodyPart
+            bodyPart = bodyPart,
+            allBodyPartValues = bodyPartValues,
+            chartBodyPartValues = when (state.timeRange) {
+                TimeRange.LAST_7_DAYS -> last7DaysValues
+                TimeRange.LAST_30_DAYS -> last30DaysValues
+                TimeRange.ALL_TIME -> bodyPartValues
+            }
         )
     }.catch { e ->
         _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${e.message}"))
@@ -78,7 +94,11 @@ class DetailsViewModel @Inject constructor(
                 deleteBodyPart()
             }
 
-            DetailsEvent.RestoreBodyPart -> TODO()
+            DetailsEvent.RestoreBodyPart -> {
+                upsertBodyPartValue(state.value.recentlyDeletedBodyPart)
+                _state.update { it.copy(recentlyDeletedBodyPart = null) }
+            }
+
             is DetailsEvent.ChangeMeasuringUnit -> {
                 val bodyPart = state.value.bodyPart?.copy(
                     measuringUnit = event.measuringUnit.code
@@ -86,7 +106,11 @@ class DetailsViewModel @Inject constructor(
                 changeMeasuringUnit(bodyPart = bodyPart)
             }
 
-            is DetailsEvent.DeleteBodyPartValue -> TODO()
+            is DetailsEvent.DeleteBodyPartValue -> {
+                deleteBodyPartValue(event.bodyPartValues)
+                _state.update { it.copy(recentlyDeletedBodyPart = event.bodyPartValues) }
+            }
+
             is DetailsEvent.OnDateChange -> {
                 val date = event.millis.changeMillisToGraphDate()
                 _state.update { it.copy(date = date) }
@@ -98,7 +122,11 @@ class DetailsViewModel @Inject constructor(
                 }
             }
 
-            is DetailsEvent.OnTimeRangeChange -> TODO()
+            is DetailsEvent.OnTimeRangeChange -> {
+                _state.update {
+                    it.copy(timeRange = event.timeRange)
+                }
+            }
 
         }
     }
@@ -137,6 +165,23 @@ class DetailsViewModel @Inject constructor(
             databaseRepository.upsertBodyPartValues(bodyPartValues)
                 .onSuccess {
                     _uiEvent.send(UIEvent.ShowSnackBar("Body Part Value saved!"))
+                }
+                .onFailure {
+                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                }
+        }
+    }
+
+    private fun deleteBodyPartValue(bodyPartValues: BodyPartValues) {
+        viewModelScope.launch {
+            databaseRepository.deleteBodyPartValue(bodyPartValues)
+                .onSuccess {
+                    _uiEvent.send(
+                        UIEvent.ShowSnackBar(
+                            "Body Part Value deleted!",
+                            actionLabel = "Undo"
+                        )
+                    )
                 }
                 .onFailure {
                     _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))

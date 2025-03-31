@@ -3,6 +3,7 @@ package com.example.precisepal.presentation.signIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,35 +13,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.precisepal.R
 import com.example.precisepal.presentation.components.AnonymouslySignInButton
 import com.example.precisepal.presentation.components.GoogleSignInButton
 import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-
 
 @Composable
 fun SignInScreen(
@@ -90,46 +88,85 @@ fun SignInScreen(
                 modifier = Modifier
                     .padding(paddingValuesInstance)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(color = Color(0xFFF6F6F6)),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Text(
+                    text = "BookMile",
+                    fontFamily = InterFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 24.sp,
+                    color = Color(0xFF5863BD),
+                )
+
                 Image(
-                    painter = painterResource(id = R.drawable.splash_screen_logo),
+                    painter = painterResource(id = R.drawable.intro),
                     contentDescription = "Logo",
-                    modifier = Modifier.size(160.dp)
+                    modifier = Modifier.size(540.dp)
                 )
-                Spacer(modifier = Modifier.height(220.dp))
 
-                Text(
-                    text = "PrecisePal",
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column {
+                            Text(
+                                text = "Read, Track, Achieve.",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontSize = 28.sp,
+                                letterSpacing = 0.5.sp,
+                                fontFamily = InterFontFamily,
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = "Upgrade Your Reading Journey with BookMile!",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontFamily = InterFontFamily,
+                                letterSpacing = 0.2.sp,
+                                textAlign = TextAlign.Start
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Track your books, set goals, and stay motivated as you read. Start now and make every page count!",
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Gray,
+                                letterSpacing = 0.2.sp,
+                                lineHeight = 20.sp,
+                                fontSize = 14.sp,
+                                fontFamily = InterFontFamily,
+                                textAlign = TextAlign.Start
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        GoogleSignInButton(
+                            //state
+                            loadingState = state.isGoogleSignInButtonLoading,
+                            enableUI = !state.isGoogleSignInButtonLoading && !state.isAnonymousSignInButtonLoading,
+                            //events
+                            onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
+                        Spacer(modifier = Modifier.height((-10).dp))
+                        AnonymouslySignInButton(
+                            //state
+                            loadingState = state.isAnonymousSignInButtonLoading,
+                            enableUI = !state.isAnonymousSignInButtonLoading && !state.isGoogleSignInButtonLoading,
+                            modifier = Modifier,
+                            onButtonClick = { isDialogOpen = true }
+                        )
+                    }
 
-                    )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.onboarding_into),
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                GoogleSignInButton(
-                    //state
-                    loadingState = state.isGoogleSignInButtonLoading,
-                    enableUI = !state.isGoogleSignInButtonLoading && !state.isAnonymousSignInButtonLoading,
-                    //events
-                    onButtonClick = { onEvent(SignInEvent.SignInWithGoogle(context = contextInstance)) })
-                AnonymouslySignInButton(
-                    //state
-                    loadingState = state.isAnonymousSignInButtonLoading,
-                    enableUI = !state.isAnonymousSignInButtonLoading && !state.isGoogleSignInButtonLoading,
-                    modifier = Modifier,
-                    onButtonClick = { isDialogOpen = true })
+                }
             }
         }
         //Else use this UI
@@ -137,7 +174,7 @@ fun SignInScreen(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(color = Color(0xFFF6F6F6)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -149,33 +186,53 @@ fun SignInScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.splash_screen_logo),
+                        painter = painterResource(id = R.drawable.intro),
                         contentDescription = "Logo",
-                        modifier = Modifier.size(160.dp)
-                    )
-                    Text(
-                        text = "PrecisePal",
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Text(
-                        text = stringResource(R.string.onboarding_into),
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 20.dp)
-
+                        modifier = Modifier.size(360.dp)
                     )
                 }
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .weight(1f),
+                        .weight(1f)
+                        .background(color = Color.White)
+                        .padding(horizontal = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    Column {
+                        Text(
+                            text = "Read, Track, Achieve.",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 28.sp,
+                            letterSpacing = 0.5.sp,
+                            fontFamily = InterFontFamily,
+                            textAlign = TextAlign.Start
+                        )
+                        Text(
+                            text = "Upgrade Your Reading Journey with BookMile!",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontFamily = InterFontFamily,
+                            letterSpacing = 0.2.sp,
+                            textAlign = TextAlign.Start
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Track your books, set goals, and stay motivated as you read. Start now and make every page count!",
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Gray,
+                            letterSpacing = 0.2.sp,
+                            lineHeight = 20.sp,
+                            fontSize = 14.sp,
+                            fontFamily = InterFontFamily,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(46.dp))
+
                     GoogleSignInButton(
                         //state
                         loadingState = state.isGoogleSignInButtonLoading,
@@ -192,14 +249,11 @@ fun SignInScreen(
             }
         }
     }
-
-
 }
 
-@PreviewScreenSizes
 @Preview(showBackground = true)
 @Composable
-private fun Preview() {
+private fun PreviewFunction() {
     SignInScreen(
         //Medium is used to check the screen in landscape mode
         //Compact is used to check the screen in portrait mode

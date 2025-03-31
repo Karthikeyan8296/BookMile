@@ -41,8 +41,8 @@ fun ProfilePicPlaceholder(
             model = imageReq,
             contentDescription = "Profile Pic",
             contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.splash_screen_logo),
-            error = painterResource(R.drawable.splash_screen_logo),
+            placeholder = painterResource(R.drawable.splashscreen_rounded),
+            error = painterResource(R.drawable.splashscreen_rounded),
             //if suppose profile pic rectangle shape la erutha! change to circle shape
             modifier = Modifier.clip(CircleShape).fillMaxSize()
         )

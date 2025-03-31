@@ -4,23 +4,21 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.example.precisepal.presentation.addItems.AddItemsScreen
 import com.example.precisepal.presentation.addItems.AddItemsViewModel
 import com.example.precisepal.presentation.dashboard.DashboardScreen
-import com.example.precisepal.presentation.dashboard.DashboardState
 import com.example.precisepal.presentation.dashboard.DashboardViewModel
 import com.example.precisepal.presentation.details.DetailsScreen
 import com.example.precisepal.presentation.details.DetailsViewModel
@@ -51,6 +49,8 @@ fun NavGraph(
         }
     }
     NavHost(
+        //we can send the padding values to all the screens by specifying here itself!!!
+//        modifier = Modifier.padding(paddingValuesInstance),
         navController = navControllerInstance,
         //here we are telling, from where our app will starts
         startDestination = Routes.DashboardScreen
@@ -67,7 +67,7 @@ fun NavGraph(
             val state by signInViewModelInstance.state.collectAsStateWithLifecycle()
             SignInScreen(
                 windowSizeInstance = windowSize.widthSizeClass,
-                paddingValuesInstance = paddingValuesInstance,
+                paddingValuesInstance = paddingValuesInstance, //we actually don't want this!
                 state = state,
                 onEvent = signInViewModelInstance::onEvent,
                 snackBarHostStateInstanceScreen = snackBarHostStateInstance,

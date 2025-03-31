@@ -50,7 +50,7 @@ class DashboardViewModel @Inject constructor(
     val state = combine(
         _state,
         databaseRepository.getSignInUserName(),
-        databaseRepository.getAllBodyParts()
+        databaseRepository.getAllBodyPartLatestValue()
     ) { state, user, bodyParts ->
         val activeBodyParts = bodyParts.filter { it.isActive }
         state.copy(

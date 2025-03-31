@@ -212,7 +212,7 @@ fun DashboardTopBar(
         modifier = Modifier.padding(horizontal = 8.dp),
         title = {
             Text(
-                text = "PrecisePal",
+                text = "BookMile",
                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
             )
         },

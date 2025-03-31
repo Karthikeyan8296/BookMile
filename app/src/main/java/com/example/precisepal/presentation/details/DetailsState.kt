@@ -11,6 +11,7 @@ import java.time.LocalDate
 data class DetailsState(
     val bodyPart: BodyPart? = null,
     val textFieldValue: String = "",
+    val recentlyDeletedBodyPart: BodyPartValues? = null,
     val date: LocalDate = LocalDate.now(),
     val timeRange: TimeRange = TimeRange.LAST_7_DAYS,
     val allBodyPartValues: List<BodyPartValues> = emptyList(),

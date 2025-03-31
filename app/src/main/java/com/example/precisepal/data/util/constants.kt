@@ -10,6 +10,8 @@ object constants {
     const val BODY_PART_COLLECTION = "bodyPart"
     const val BODY_PART_VALUES_COLLECTION = "bodyPartValues"
 
-    //body part field ref
+    //firestore bodyPart field ref
     const val BODY_PART_NAME_FIELD = "name"
+    //firestore bodyPartValue field ref
+    const val BODY_PART_VALUE_DATE_FIELD = "date"
 }

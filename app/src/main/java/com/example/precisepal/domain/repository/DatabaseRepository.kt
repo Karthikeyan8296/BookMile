@@ -29,6 +29,15 @@ interface DatabaseRepository {
     //delete the body part
     suspend fun deleteBodyPart(bodyPartID: String): Result<Boolean>
 
-    //body part values - graph values
+    //send body part values to firestore - graph values
     suspend fun upsertBodyPartValues(bodyPartValues: BodyPartValues): Result<Boolean>
+
+    //get all the bodyPart values from the firestore
+    fun getAllBodyPartValues(bodyPartId: String): Flow<List<BodyPartValues>>
+
+    //delete bodyPartValue
+    suspend fun deleteBodyPartValue(bodyPartValues: BodyPartValues): Result<Boolean>
+
+    //get all bodyParts latest value to show in the dashboard screen
+    fun getAllBodyPartLatestValue(): Flow<List<BodyPart>>
 }

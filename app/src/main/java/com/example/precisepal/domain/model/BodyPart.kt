@@ -24,7 +24,7 @@ enum class MeasuringUnit(
 
 val predefinedBodyPart: List<BodyPart> = listOf(
     BodyPart(
-        name = "Chest",
+        name = "s",
         isActive = true,
         measuringUnit = MeasuringUnit.INCHES.code,
         latestValue = 40.5f,
@@ -81,7 +81,7 @@ val predefinedBodyPart: List<BodyPart> = listOf(
         name = "Ankle",
         isActive = false,
         measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = null,
+        latestValue = 20.5f,
     ),
     BodyPart(
         name = "Upper Arm",

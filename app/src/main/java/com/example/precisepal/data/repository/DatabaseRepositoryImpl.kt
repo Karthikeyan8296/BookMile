@@ -1,14 +1,17 @@
 package com.example.precisepal.data.repository
 
 import com.example.precisepal.data.mapper.BodyPartDTO
+import com.example.precisepal.data.mapper.BodyPartValueDTO
 import com.example.precisepal.data.mapper.UserDTO
 import com.example.precisepal.data.mapper.toBodyPart
 import com.example.precisepal.data.mapper.toBodyPartDTO
 import com.example.precisepal.data.mapper.toBodyPartValueDTO
+import com.example.precisepal.data.mapper.toBodyPartValues
 import com.example.precisepal.data.mapper.toUser
 import com.example.precisepal.data.util.constants.BODY_PART_COLLECTION
 import com.example.precisepal.data.util.constants.BODY_PART_NAME_FIELD
 import com.example.precisepal.data.util.constants.BODY_PART_VALUES_COLLECTION
+import com.example.precisepal.data.util.constants.BODY_PART_VALUE_DATE_FIELD
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
 import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.BodyPartValues
@@ -17,8 +20,10 @@ import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlin.contracts.Returns
@@ -192,5 +197,69 @@ class DatabaseRepositoryImpl(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    //get the bodyPartValues from the firestore
+    override fun getAllBodyPartValues(bodyPartId: String): Flow<List<BodyPartValues>> {
+        return flow {
+            try {
+                bodyPartValueCollection(bodyPartId)
+                    .orderBy(BODY_PART_VALUE_DATE_FIELD, Query.Direction.DESCENDING)
+                    .snapshots()
+                    .collect { snapshot ->
+                        val bodyPartValueDTOList = snapshot.toObjects(BodyPartValueDTO::class.java)
+                        emit(bodyPartValueDTOList.map { it.toBodyPartValues() })
+                    }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+    //delete bodyPart value
+    override suspend fun deleteBodyPartValue(bodyPartValues: BodyPartValues): Result<Boolean> {
+        return try {
+            bodyPartValueCollection(bodyPartValues.bodyPartId.orEmpty())
+                .document(bodyPartValues.bodyPartValueID.orEmpty())
+                .delete()
+                .await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    //get all bodyParts latest value to show in the dashboard screen
+    override fun getAllBodyPartLatestValue(): Flow<List<BodyPart>> {
+        return flow {
+            try {
+                bodyPartCollection()
+                    .orderBy(BODY_PART_NAME_FIELD)
+                    .snapshots()
+                    .collect { snapshot ->
+                        val bodyPartDTOList = snapshot.toObjects(BodyPartDTO::class.java)
+                        val bodyPart = bodyPartDTOList.mapNotNull { bodyPartDTO ->
+                            bodyPartDTO.bodyPartId?.let { bodyPartID ->
+                                val latestBodyPartValue = getLatestBodyPartValue(bodyPartID)
+                                bodyPartDTO.copy(latestValue = latestBodyPartValue?.value ?: 0.0f)
+                                    .toBodyPart()
+                            }
+                        }
+                        emit(bodyPart)
+                    }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+
+    private suspend fun getLatestBodyPartValue(bodyPartID: String): BodyPartValueDTO? {
+        val querySnapshot = bodyPartValueCollection(bodyPartID)
+            .orderBy(BODY_PART_VALUE_DATE_FIELD, Query.Direction.DESCENDING)
+            .limit(1)
+            .snapshots()
+            .firstOrNull()
+        return querySnapshot?.documents?.firstOrNull()?.toObject(BodyPartValueDTO::class.java)
     }
 }

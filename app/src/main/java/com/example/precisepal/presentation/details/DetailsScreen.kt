@@ -35,7 +35,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
@@ -96,7 +98,14 @@ fun DetailsScreen(
         uiEvent.collect { event ->
             when (event) {
                 is UIEvent.ShowSnackBar -> {
-                    snackbarHostStateInstanceScreen.showSnackbar(event.message)
+                    val result = snackbarHostStateInstanceScreen.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.actionLabel,
+                        duration = SnackbarDuration.Short
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        onEvent(DetailsEvent.RestoreBodyPart)
+                    }
                 }
 
                 UIEvent.HideBottomSheet -> {}
@@ -144,14 +153,15 @@ fun DetailsScreen(
         }
     )
 
-    var selectedTimeRange by rememberSaveable {
-        mutableStateOf(TimeRange.LAST_7_DAYS)
-    }
+//    var selectedTimeRange by rememberSaveable {
+//        mutableStateOf(TimeRange.LAST_7_DAYS)
+//    }
 
     //input state
 //    var inputValue by remember {
 //        mutableStateOf("")
 //    }
+
     //focus manager - for IME actions
     val focusManager = LocalFocusManager.current
 
@@ -209,14 +219,14 @@ fun DetailsScreen(
                     //header
                     DetailsTopBar(
                         onDeleteIconClick = { isDeleteDialogOpen = true },
-                        onBackIconClick = { onBackClickInstance() },
+                        onBackIconClick = onBackClickInstance,
                         onUnitIconClick = { isBottomSheetOpen = true },
                         bodyPartInstance = state.bodyPart
                     )
                     //toggle button component
                     ChartTimeRangeButton(
-                        onButtonClick = { selectedTimeRange = it },
-                        selectedTimeRange = selectedTimeRange
+                        onButtonClick = { onEvent(DetailsEvent.OnTimeRangeChange(it)) },
+                        selectedTimeRange = state.timeRange
                     )
                     Spacer(Modifier.height(16.dp))
                     //graph component
@@ -225,13 +235,13 @@ fun DetailsScreen(
                             .fillMaxWidth()
                             .aspectRatio(ratio = 2 / 1f)
                             .padding(16.dp),
-                        bodyPartValueInstance = dummyList
+                        bodyPartValueInstance = state.chartBodyPartValues
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     HistorySection(
-                        bodyPartInstance = dummyList,
-                        onDeleteIconClick = {},
-                        measuringUnitCode = "cm"
+                        bodyPartInstance = state.allBodyPartValues,
+                        onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
+                        measuringUnitCode = state.bodyPart?.measuringUnit
                     )
                 }
 
@@ -269,12 +279,13 @@ fun DetailsScreen(
             Column(
                 modifier = modifier
                     .fillMaxSize()
+                    .padding(paddingValuesInstance)
                     .background(color = MaterialTheme.colorScheme.background)
             ) {
                 //header
                 DetailsTopBar(
                     onDeleteIconClick = { isDeleteDialogOpen = true },
-                    onBackIconClick = {},
+                    onBackIconClick = onBackClickInstance,
                     onUnitIconClick = { isBottomSheetOpen = true },
                     bodyPartInstance = state.bodyPart
                 )
@@ -288,8 +299,8 @@ fun DetailsScreen(
                     ) {
                         //toggle button component
                         ChartTimeRangeButton(
-                            onButtonClick = { selectedTimeRange = it },
-                            selectedTimeRange = selectedTimeRange
+                            onButtonClick = { onEvent(DetailsEvent.OnTimeRangeChange(it)) },
+                            selectedTimeRange = state.timeRange
                         )
                         Spacer(Modifier.height(16.dp))
                         //graph component
@@ -298,7 +309,7 @@ fun DetailsScreen(
                                 .fillMaxWidth()
                                 .aspectRatio(ratio = 2 / 1f)
                                 .padding(16.dp),
-                            bodyPartValueInstance = dummyList
+                            bodyPartValueInstance = state.chartBodyPartValues
                         )
                     }
                     Box(
@@ -307,15 +318,17 @@ fun DetailsScreen(
                             .weight(1f),
                     ) {
                         HistorySection(
-                            bodyPartInstance = dummyList,
-                            onDeleteIconClick = {},
-                            measuringUnitCode = "cm"
+                            bodyPartInstance = state.allBodyPartValues,
+                            onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
+                            measuringUnitCode = state.bodyPart?.measuringUnit
                         )
                         //input field
                         NewValueInputBar(
                             modifier = Modifier.align(Alignment.BottomCenter),
                             value = state.textFieldValue,
                             //it will display the date over here
+//                    date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
+//                        .changeLocalDateToFullDate(),
                             date = state.date.changeLocalDateToFullDate(),
                             onDoneClick = {
                                 focusManager.clearFocus()
@@ -477,7 +490,7 @@ private fun TimeRangeSelectionButton(
 private fun HistorySection(
     bodyPartInstance: List<BodyPartValues>,
     measuringUnitCode: String?,
-    onDeleteIconClick: () -> Unit,
+    onDeleteIconClick: (BodyPartValues) -> Unit,
 ) {
     LazyColumn {
         //it will take the groups of months
@@ -509,7 +522,7 @@ private fun HistorySection(
                 HistoryCard(
                     bodyPartInstance = bodyPartInstance,
                     measuringUnitCode = measuringUnitCode,
-                    onDeleteIconClick = onDeleteIconClick
+                    onDeleteIconClick = { onDeleteIconClick(bodyPartInstance) }
                 )
                 Spacer(Modifier.height(12.dp))
             }
