@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.precisepal.domain.model.User
+import com.example.precisepal.presentation.theme.InterFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +37,8 @@ fun ProfileBottomSheet(
     if (isOpen) {
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
-            sheetState = sheetState
+            sheetState = sheetState,
+            containerColor = Color.White
         ) {
             Column(
                 modifier = Modifier
@@ -47,15 +50,18 @@ fun ProfileBottomSheet(
                 ProfilePicPlaceholder(
                     profilePicUrl = if (userInstance == null || userInstance.isAnonymous) null else userInstance.profilePic,
                     placeHolderSize = 120.dp,
-                    boarderWidth = 1.dp
+                    boarderWidth = 0.6.dp
                 )
                 Text(
                     text = if (userInstance == null || userInstance.isAnonymous) "Anonymous" else userInstance.name,
-                    style = MaterialTheme.typography.bodyLarge
+                    fontFamily = InterFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black
                 )
                 Text(
                     text = if (userInstance == null || userInstance.isAnonymous) "anonymous@measuremate.io" else userInstance.email,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 GoogleSignInButton(

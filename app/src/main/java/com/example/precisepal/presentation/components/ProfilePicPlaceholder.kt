@@ -32,7 +32,7 @@ fun ProfilePicPlaceholder(
         modifier = Modifier
             .size(placeHolderSize)
             .border(
-                width = boarderWidth, color = Color.Gray,
+                width = boarderWidth, color = Color(0xFF5863BD),
                 shape = CircleShape
             ),
         contentAlignment = Alignment.Center

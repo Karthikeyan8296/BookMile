@@ -3,6 +3,7 @@ package com.example.precisepal.presentation
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +40,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                Color(0xFFF6F6F6).hashCode(),
+                Color.Black.hashCode()
+            ), SystemBarStyle.dark(
+                Color(0xFFF6F6F6).hashCode()
+            )
+        )
         setContent {
             PrecisePalTheme {
                 //here we are calculating the screen size, depends up on the device//
@@ -61,6 +70,7 @@ class MainActivity : ComponentActivity() {
                                     0
                                 )
                             }
+
                             AuthStatus.UNAUTHENTICATED -> navController.navigate(Routes.SignInScreen) {
                                 popUpTo(
                                     0
