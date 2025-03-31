@@ -244,7 +244,7 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
             disabledContentColor = Color.White
         ),
         //if the body part is not null, then we will call this click fun
-        onClick = { bodyPartInstance.bodyPartId?.let { onCardClick(it) } },
+        onClick = { bodyPartInstance.bookId?.let { onCardClick(it) } },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 18.dp),
@@ -280,7 +280,7 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    "${bodyPartInstance.latestValue ?: ""} ${bodyPartInstance.measuringUnit}",
+                    "${bodyPartInstance.currentPage ?: ""} ${bodyPartInstance.progress}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Box(

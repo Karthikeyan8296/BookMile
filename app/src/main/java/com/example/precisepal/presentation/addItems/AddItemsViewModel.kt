@@ -3,7 +3,7 @@ package com.example.precisepal.presentation.addItems
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.MeasuringUnit
+import com.example.precisepal.domain.model.ProgressStatus
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,9 +75,9 @@ class AddItemsViewModel @Inject constructor(
                     bodyPart = BodyPart(
                         name = state.value.textFieldValue.trim(),
                         isActive = selectedBodyPart?.isActive ?: true,
-                        measuringUnit = selectedBodyPart?.measuringUnit
-                            ?: MeasuringUnit.CENTIMETERS.code,
-                        bodyPartId = selectedBodyPart?.bodyPartId
+                        progress = selectedBodyPart?.progress
+                            ?: ProgressStatus.IN_PROGRESS.code,
+                        bookId = selectedBodyPart?.bookId
                     )
                 )
                 _state.update { it.copy(textFieldValue = "") }

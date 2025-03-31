@@ -20,8 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.precisepal.domain.model.MeasuringUnit
+import com.example.precisepal.domain.model.ProgressStatus
+import com.example.precisepal.presentation.theme.InterFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,13 +32,14 @@ fun MeasureUnitBottomSheet(
     onDismiss: () -> Unit,
     isOpen: Boolean,
     preBuildSheetState: SheetState,
-    onItemClicked: (MeasuringUnit) -> Unit,
+    onItemClicked: (ProgressStatus) -> Unit,
 ) {
     //this state will open the full bottom sheet
     if (isOpen) {
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
             sheetState = preBuildSheetState,
+            containerColor = Color.White,
             dragHandle = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -43,11 +47,14 @@ fun MeasureUnitBottomSheet(
                 ) {
                     BottomSheetDefaults.DragHandle()
                     Text(
-                        text = "Select Measuring Unit",
+                        text = "Your reading progress",
+                        color = Color.Black,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = InterFontFamily,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(Modifier.height(10.dp))
-                    HorizontalDivider()
+                    HorizontalDivider(color = Color.Gray)
                 }
             },
         ) {
@@ -58,13 +65,15 @@ fun MeasureUnitBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                items(MeasuringUnit.entries){unit ->
+                items(ProgressStatus.entries){ unit ->
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onItemClicked(unit) }
                         .padding(vertical = 12.dp, horizontal = 16.dp)) {
                         Text(
                             text = "${unit.code} - ${unit.label}",
+                            color = Color.Black,
+                            fontFamily = InterFontFamily,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

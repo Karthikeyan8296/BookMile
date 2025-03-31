@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import kotlin.contracts.Returns
 
 class DatabaseRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
@@ -112,7 +111,7 @@ class DatabaseRepositoryImpl(
     override suspend fun upsertBodyPort(bodyPart: BodyPart): Result<Boolean> {
         return try {
             //if we edit the existing body part, then it will edit that id only, will not create new one
-            val documentID = bodyPart.bodyPartId ?: bodyPartCollection().document().id
+            val documentID = bodyPart.bookId ?: bodyPartCollection().document().id
             //we are setting the bodypart id to the bodypartDTO as Document ID
             val bodyPartDTO = bodyPart.toBodyPartDTO().copy(bodyPartId = documentID)
             bodyPartCollection()

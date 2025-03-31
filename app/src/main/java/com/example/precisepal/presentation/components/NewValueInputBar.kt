@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -30,9 +31,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.precisepal.presentation.theme.InterFontFamily
 
 @Composable
 fun NewValueInputBar(
@@ -50,10 +56,10 @@ fun NewValueInputBar(
         mutableStateOf<String?>(null)
     }
     inputError = when {
-        value.isBlank() -> "Please enter your gains"
-        value.toFloatOrNull() == null -> "Invalid value"
-        value.toFloat() < 0f -> "Value cannot be negative"
-        value.toFloat() > 1000 -> "Please set maximum of 1000"
+        value.isBlank() -> "Please enter the number of pages you've read."
+        value.toIntOrNull() == null -> "Enter a valid number of pages."
+        value.toInt() < 0 -> "Pages read cannot be negative."
+        value.toInt() > 500 -> "You can log up to 500 pages only."
         else -> null
     }
 
@@ -66,15 +72,16 @@ fun NewValueInputBar(
     ) {
         Row(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
+                .background(color = Color(0xFFF6F6F6))
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
-                placeholder = { Text(text = "log your gains") },
+                placeholder = { Text(text = "Enter pages read") },
                 value = value,
                 onValueChange = onValueChange,
+                textStyle = TextStyle(color = Color.Black),
                 //this will not go to next line
                 singleLine = true,
                 //error message will show if it has error
@@ -88,9 +95,21 @@ fun NewValueInputBar(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = date)
+                        Text(
+                            text = date,
+                            color = Color.Black,
+                            fontFamily = InterFontFamily,
+                            letterSpacing = 0.5.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                         IconButton(
-                            onClick = { onCalenderIconClick() }
+                            onClick = { onCalenderIconClick() },
+                            colors = IconButtonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Black,
+                                disabledContainerColor = Color.Transparent,
+                                disabledContentColor = Color.Black
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
@@ -104,6 +123,12 @@ fun NewValueInputBar(
                 onClick = { onDoneClick() },
                 modifier = Modifier
                     .size(46.dp),
+                colors = IconButtonColors(
+                    containerColor = Color(0xFF5863BD),
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFFE8ECFF),
+                    disabledContentColor = Color(0xFF5863BD)
+                ),
                 //if it has error, then it will not enable the button
                 enabled = inputError == null
             ) {

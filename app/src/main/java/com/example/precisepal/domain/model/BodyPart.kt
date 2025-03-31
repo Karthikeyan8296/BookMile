@@ -3,144 +3,106 @@ package com.example.precisepal.domain.model
 data class BodyPart(
     val name: String,
     val isActive: Boolean,
-    val measuringUnit: String,
-    val latestValue: Float? = null,
-    val bodyPartId: String? = null
+    val progress: String,
+    val currentPage: Float? = null,
+    val bookId: String? = null,
 )
 
-enum class MeasuringUnit(
+enum class ProgressStatus(
     val code: String,
-    val label: String
-){
-    INCHES("in", "Inches"),
-    CENTIMETERS("cm", "Centimeters"),
-    FEET("ft", "Feet"),
-    PERCENTAGE("%", "Percentage"),
-    KILOGRAMS("kg", "Kilograms"),
-    POUNDS("lbs", "Pounds"),
-    METERS("m", "Meters"),
-    MILLIMETERS("mm", "Millimeters")
+    val label: String,
+) {
+    COMPLETED("✅", "Completed"),
+    GOING_WELL("👍", "Going Well"),
+    PLANNING_TO_READ("🔍", "Planning to Read"),
+    ARCHIVED("📁", "Archived"),
+    IN_PROGRESS("⏳", "In Progress"),
+    NOT_STARTED_YET("❌", "Not Started Yet")
 }
 
 val predefinedBodyPart: List<BodyPart> = listOf(
     BodyPart(
-        name = "s",
+        name = "Atomic Habits",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 40.5f,
+        progress = ProgressStatus.COMPLETED.code,
+        currentPage = 320f
     ),
     BodyPart(
-        name = "Hips",
+        name = "Deep Work",
         isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 95.0f,
+        progress = ProgressStatus.GOING_WELL.code,
+        currentPage = 150f
     ),
     BodyPart(
-        name = "Thigh",
+        name = "The Lean Startup",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 24.3f,
+        progress = ProgressStatus.PLANNING_TO_READ.code,
+        currentPage = 0f
     ),
     BodyPart(
-        name = "Biceps",
+        name = "Pragmatic Programmer",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 13.5f,
+        progress = ProgressStatus.IN_PROGRESS.code,
+        currentPage = 120f
     ),
     BodyPart(
-        name = "Neck",
+        name = "Clean Code",
         isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 38.0f,
+        progress = ProgressStatus.IN_PROGRESS.code,
+        currentPage = 250f
     ),
     BodyPart(
-        name = "Forearm",
-        isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 10.5f,
-    ),
-    BodyPart(
-        name = "Calf",
-        isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 38.5f,
-    ),
-    BodyPart(
-        name = "Shoulder",
-        isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 45.0f,
-    ),
-    BodyPart(
-        name = "Wrist",
-        isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 16.0f,
-    ),
-    BodyPart(
-        name = "Ankle",
+        name = "You Don’t Know JS",
         isActive = false,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 20.5f,
+        progress = ProgressStatus.ARCHIVED.code,
+        currentPage = 80f
     ),
     BodyPart(
-        name = "Upper Arm",
+        name = "Eloquent JavaScript",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 12.0f,
+        progress = ProgressStatus.NOT_STARTED_YET.code,
+        currentPage = 0f
     ),
     BodyPart(
-        name = "Torso",
+        name = "The Psychology of Money",
         isActive = true,
-        measuringUnit = MeasuringUnit.FEET.code,
-        latestValue = 5.0f,
+        progress = ProgressStatus.COMPLETED.code,
+        currentPage = 210f
     ),
     BodyPart(
-        name = "Abdomen",
+        name = "Rich Dad Poor Dad",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 34.0f,
+        progress = ProgressStatus.GOING_WELL.code,
+        currentPage = 160f
     ),
     BodyPart(
-        name = "Quads",
+        name = "Zero to One",
         isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 54.0f,
+        progress = ProgressStatus.PLANNING_TO_READ.code,
+        currentPage = 0f
     ),
     BodyPart(
-        name = "Hamstring",
+        name = "Cracking the Coding Interview",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 18.0f,
+        progress = ProgressStatus.IN_PROGRESS.code,
+        currentPage = 300f
     ),
     BodyPart(
-        name = "Lower Back",
-        isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 32.5f,
+        name = "The Art of Computer Programming",
+        isActive = false,
+        progress = ProgressStatus.ARCHIVED.code,
+        currentPage = 100f
     ),
     BodyPart(
-        name = "Upper Back",
+        name = "Refactoring",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 38.0f,
+        progress = ProgressStatus.NOT_STARTED_YET.code,
+        currentPage = 0f
     ),
     BodyPart(
-        name = "Triceps",
+        name = "Soft Skills: The IT Life Manual",
         isActive = true,
-        measuringUnit = MeasuringUnit.INCHES.code,
-        latestValue = 12.5f,
-    ),
-    BodyPart(
-        name = "Obliques",
-        isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 88.0f,
-    ),
-    BodyPart(
-        name = "Glutes",
-        isActive = true,
-        measuringUnit = MeasuringUnit.CENTIMETERS.code,
-        latestValue = 100.0f,
+        progress = ProgressStatus.COMPLETED.code,
+        currentPage = 270f
     )
 )

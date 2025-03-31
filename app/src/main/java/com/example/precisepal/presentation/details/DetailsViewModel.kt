@@ -101,7 +101,7 @@ class DetailsViewModel @Inject constructor(
 
             is DetailsEvent.ChangeMeasuringUnit -> {
                 val bodyPart = state.value.bodyPart?.copy(
-                    measuringUnit = event.measuringUnit.code
+                    progress = event.measuringUnit.code
                 )
                 changeMeasuringUnit(bodyPart = bodyPart)
             }

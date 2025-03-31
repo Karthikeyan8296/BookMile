@@ -14,9 +14,9 @@ fun BodyPart.toBodyPartDTO() : BodyPartDTO{
     return BodyPartDTO(
         name = name,
         active = isActive,
-        measuringUnit = measuringUnit,
-        latestValue = latestValue,
-        bodyPartId = bodyPartId,
+        measuringUnit = progress,
+        latestValue = currentPage,
+        bodyPartId = bookId,
     )
 }
 
@@ -24,8 +24,8 @@ fun BodyPartDTO.toBodyPart() : BodyPart{
     return BodyPart(
         name = name,
         isActive = active,
-        measuringUnit = measuringUnit,
-        latestValue = latestValue,
-        bodyPartId = bodyPartId,
+        progress = measuringUnit,
+        currentPage = latestValue,
+        bookId = bodyPartId,
     )
 }

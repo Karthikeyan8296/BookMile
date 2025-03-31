@@ -30,16 +30,19 @@ import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -69,6 +72,7 @@ import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
 import com.example.precisepal.presentation.components.NewValueInputBar
 import com.example.precisepal.presentation.components.datePicker
+import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.UIEvent
 import com.example.precisepal.presentation.util.changeLocalDateToFullDate
 import com.example.precisepal.presentation.util.pastOrPresentSelectableDates
@@ -125,8 +129,8 @@ fun DetailsScreen(
             isDeleteDialogOpen = false
             onEvent(DetailsEvent.DeleteBodyPart)
         },
-        title = "delete Body Part",
-        body = { Text("Are you sure, want to delete?") },
+        title = "Delete Book",
+        body = { Text("Are you sure you want to delete this book? This action cannot be undone.") },
         confirmButtonText = "Delete",
         dismissButtonText = "Cancel"
     )
@@ -206,13 +210,13 @@ fun DetailsScreen(
 //                    .consumeWindowInsets(contentPadding)
 //                    .imePadding()
                     .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background)
+                    .background(color = Color(0xFFF6F6F6))
             ) {
                 //Main Layout
                 Column(
                     modifier = modifier
                         .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.background)
+                        .background(color = Color(0xFFF6F6F6))
                 ) {
                     //header
                     DetailsTopBar(
@@ -235,17 +239,18 @@ fun DetailsScreen(
                             .padding(16.dp),
                         bodyPartValueInstance = state.chartBodyPartValues
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     HistorySection(
                         bodyPartInstance = state.allBodyPartValues,
                         onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
-                        measuringUnitCode = state.bodyPart?.measuringUnit
+                        measuringUnitCode = state.bodyPart?.progress
                     )
                 }
 
                 //input field
                 NewValueInputBar(
-                    modifier = Modifier.align(Alignment.BottomCenter),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter),
                     value = state.textFieldValue,
                     //it will display the date over here
 //                    date = datePickerState.selectedDateMillis.changeMillisToGraphDate()
@@ -278,7 +283,7 @@ fun DetailsScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValuesInstance)
-                    .background(color = MaterialTheme.colorScheme.background)
+                    .background(color = Color(0xFFF6F6F6))
             ) {
                 //header
                 DetailsTopBar(
@@ -318,7 +323,7 @@ fun DetailsScreen(
                         HistorySection(
                             bodyPartInstance = state.allBodyPartValues,
                             onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
-                            measuringUnitCode = state.bodyPart?.measuringUnit
+                            measuringUnitCode = state.bodyPart?.progress
                         )
                         //input field
                         NewValueInputBar(
@@ -382,9 +387,19 @@ fun DetailsTopBar(
     TopAppBar(
         windowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.fillMaxWidth(),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFFF6F6F6),
+            titleContentColor = Color(0xFF5863BD),
+            navigationIconContentColor = Color.Black,
+            actionIconContentColor = Color.Black
+        ),
         title = {
             Text(
-                text = bodyPartInstance?.name ?: "", maxLines = 1, overflow = TextOverflow.Ellipsis
+                text = bodyPartInstance?.name ?: "",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontFamily = InterFontFamily,
+                fontWeight = FontWeight.SemiBold
             )
         },
         navigationIcon = {
@@ -400,7 +415,7 @@ fun DetailsTopBar(
                 Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
             }
             Spacer(Modifier.width(8.dp))
-            Text(text = bodyPartInstance?.measuringUnit ?: "")
+            Text(text = bodyPartInstance?.progress ?: "")
             IconButton(onClick = { onUnitIconClick() }) {
                 Icon(imageVector = Icons.Rounded.ArrowDropDown, contentDescription = null)
             }
@@ -420,7 +435,7 @@ private fun ChartTimeRangeButton(
             .fillMaxWidth()
             .height(60.dp)
             .padding(horizontal = 24.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp)),
+            .background(Color.White, shape = RoundedCornerShape(8.dp)),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -430,17 +445,19 @@ private fun ChartTimeRangeButton(
                 label = timeRange.label,
                 labelTextStyle = if (timeRange == selectedTimeRange) {
                     MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = InterFontFamily,
+                        color = Color.White
                     )
                 } else {
                     MaterialTheme.typography.labelLarge.copy(
-                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        color = Color.Gray,
+                        fontFamily = InterFontFamily,
                         fontWeight = FontWeight.SemiBold
                     )
                 },
                 backgroundColor = if (timeRange == selectedTimeRange) {
-                    MaterialTheme.colorScheme.surface
+                    Color(0xFF5863BD)
                 } else {
                     Color.Transparent
                 },
@@ -499,7 +516,7 @@ private fun HistorySection(
                 text = "History", style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = Color(0xFF5863BD),
                 ),
                 modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 12.dp)
             )
@@ -511,7 +528,7 @@ private fun HistorySection(
                     text = month.name, style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color(0xFF5863BD)
                     ),
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 8.dp)
                 )
@@ -541,7 +558,13 @@ private fun HistoryCard(
         modifier = modifier
             .fillMaxWidth()
             .height(55.dp)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        colors = CardColors(
+            containerColor = Color.White,
+            contentColor = Color.Black,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.White,
+        )
     ) {
         Row(
             modifier = modifier
@@ -550,7 +573,11 @@ private fun HistoryCard(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = Icons.Rounded.DateRange, contentDescription = "")
+            Icon(
+                imageVector = Icons.Rounded.DateRange,
+                contentDescription = "",
+                tint = Color(0xFF5863BD)
+            )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = bodyPartInstance.date.changeLocalDateToFullDate(),
@@ -559,6 +586,7 @@ private fun HistoryCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
+                    fontFamily = InterFontFamily,
                     fontSize = 14.sp
                 )
             )
@@ -567,22 +595,24 @@ private fun HistoryCard(
                 text = bodyPartInstance.value.toString(),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
+                    fontFamily = InterFontFamily,
                     fontSize = 14.sp
                 )
             )
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(
-                text = measuringUnitCode.toString(),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp
-                )
-            )
-            Spacer(modifier = Modifier.width(6.dp))
+//            Spacer(modifier = Modifier.width(2.dp))
+//            Text(
+//                text = measuringUnitCode.toString(),
+//                style = MaterialTheme.typography.bodyMedium.copy(
+//                    fontWeight = FontWeight.Medium,
+//                    fontSize = 14.sp
+//                )
+//            )
+            Spacer(modifier = Modifier.width(4.dp))
             IconButton(onClick = { onDeleteIconClick() }) {
                 Icon(
                     imageVector = Icons.Rounded.Delete,
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = Color.Gray
                 )
             }
         }
@@ -596,7 +626,14 @@ fun InputCardHideIcon(
     isInputValueCardVisible: Boolean,
     onClick: () -> Unit,
 ) {
-    IconButton(modifier = modifier, onClick = { onClick() }) {
+    IconButton(
+        modifier = modifier, onClick = { onClick() }, colors = IconButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color(0xFF5863BD),
+            disabledContainerColor = Color(0xFFF6F6F6),
+            disabledContentColor = Color.Transparent
+        )
+    ) {
         Icon(
             imageVector = if (isInputValueCardVisible) Icons.Rounded.KeyboardArrowDown
             else Icons.Rounded.KeyboardArrowUp,

@@ -26,10 +26,13 @@ import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.changeLocalDateToGraphDate
 import com.example.precisepal.presentation.util.roundToDecimal
 import java.time.LocalDate
@@ -40,10 +43,14 @@ fun LineGraph(
     modifier: Modifier,
     bodyPartValueInstance: List<BodyPartValues>,
     pathAndCircleWidth: Float = 5f,
-    pathAndCircleColor: Color = MaterialTheme.colorScheme.primary,
-    graphTextColor: Color = MaterialTheme.colorScheme.secondary,
-    helperLinesColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    pathAndCircleColor: Color = Color(0xFF314AF3),
+    graphTextColor: Color = Color(0xFF5863BD),
+    helperLinesColor: Color = Color.LightGray,
+    textStyle: TextStyle = TextStyle(
+        fontSize = 12.sp,
+        fontFamily = InterFontFamily,
+        fontWeight = FontWeight.SemiBold
+    ),
 ) {
     //value should be in descending order
     val dataPointValues = bodyPartValueInstance.asReversed().map { it.value }

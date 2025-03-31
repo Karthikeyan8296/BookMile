@@ -30,7 +30,6 @@ val displayFontFamily = FontFamily(
 val InterFontFamily = FontFamily(
     Font(R.font.inter_18pt_regular, FontWeight.Normal),
     Font(R.font.inter_18pt_bold, FontWeight.Bold),
-    Font(R.font.inter_18pt_italic, FontWeight.Medium),
     Font(R.font.inter_18pt_semibold, FontWeight.SemiBold),
     Font(R.font.inter_18pt_light, FontWeight.Light),
     Font(R.font.inter_18pt_thin, FontWeight.Thin),
