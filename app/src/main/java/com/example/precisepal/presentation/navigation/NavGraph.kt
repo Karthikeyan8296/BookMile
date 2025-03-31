@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.precisepal.presentation.Loading.LoadingScreen
 import com.example.precisepal.presentation.addItems.AddItemsScreen
 import com.example.precisepal.presentation.addItems.AddItemsViewModel
 import com.example.precisepal.presentation.dashboard.DashboardScreen
@@ -51,9 +52,15 @@ fun NavGraph(
 //        modifier = Modifier.padding(paddingValuesInstance),
         navController = navControllerInstance,
         //here we are telling, from where our app will starts
-        startDestination = Routes.DashboardScreen
+        startDestination = Routes.LoadingScreen
     )
     {
+        composable<Routes.LoadingScreen> {
+            LoadingScreen(
+                navControllerInstance = navControllerInstance,
+                paddingValuesInstance = paddingValuesInstance
+            )
+        }
 
         //for which screen we will use this composable block
         composable<Routes.SignInScreen> {

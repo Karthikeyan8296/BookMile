@@ -6,10 +6,16 @@ import kotlinx.serialization.Serializable
 sealed class Routes {
     @Serializable
     data object SignInScreen : Routes()
+
     @Serializable
-    data object DashboardScreen: Routes()
+    data object DashboardScreen : Routes()
+
     @Serializable
-    data object AddItemsScreen: Routes()
+    data object LoadingScreen : Routes()
+
+    @Serializable
+    data object AddItemsScreen : Routes()
+
     //to get the data also from previous screen, so we use data class
     @Serializable
     data class DetailsScreen(val bodyPartId: String) : Routes()

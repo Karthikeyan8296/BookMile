@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
                                     0
                                 )
                             }
-
                             AuthStatus.UNAUTHENTICATED -> navController.navigate(Routes.SignInScreen) {
                                 popUpTo(
                                     0

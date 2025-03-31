@@ -173,8 +173,7 @@ fun DashboardScreen(
                 onProfileClicks = { isProfileSheetOpen = true },
                 profilePicURL = state.user?.profilePic
             )
-            if (state.books.isEmpty()) {
-// Show alternative UI when the list is empty or null
+            if (state.books.isEmpty()) { // Show alternative UI when the list is empty or null
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

@@ -4,7 +4,7 @@ data class Book(
     val name: String,
     val isActive: Boolean,
     val progress: String,
-    val currentPage: Float? = 0f,
+    val currentPage: Float? =0f,
     val bookId: String? = null,
 )
 
