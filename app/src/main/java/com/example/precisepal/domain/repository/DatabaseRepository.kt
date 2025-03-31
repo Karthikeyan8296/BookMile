@@ -1,7 +1,7 @@
 package com.example.precisepal.domain.repository
 
-import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.Book
+import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -18,26 +18,26 @@ interface DatabaseRepository {
 
     //upsert - It is the combination of insert and update
     //insert and update the body part in the database
-    suspend fun upsertBodyPort(bodyPart: BodyPart): Result<Boolean>
+    suspend fun upsertBook(bodyPart: Book): Result<Boolean>
 
     //get all bodyParts from the firestore DB
-    fun getAllBodyParts(): Flow<List<BodyPart>>
+    fun getAllBooks(): Flow<List<Book>>
 
     //get the bodyPart for the details screen
-    fun getBodyPart(bodyPartId: String): Flow<BodyPart?>
+    fun getBook(bodyPartId: String): Flow<Book?>
 
     //delete the body part
-    suspend fun deleteBodyPart(bodyPartID: String): Result<Boolean>
+    suspend fun deleteBook(bodyPartID: String): Result<Boolean>
 
     //send body part values to firestore - graph values
-    suspend fun upsertBodyPartValues(bodyPartValues: BodyPartValues): Result<Boolean>
+    suspend fun upsertBookPageValues(bodyPartValues: BookDetails): Result<Boolean>
 
     //get all the bodyPart values from the firestore
-    fun getAllBodyPartValues(bodyPartId: String): Flow<List<BodyPartValues>>
+    fun getAllBookPageValues(bodyPartId: String): Flow<List<BookDetails>>
 
     //delete bodyPartValue
-    suspend fun deleteBodyPartValue(bodyPartValues: BodyPartValues): Result<Boolean>
+    suspend fun deleteBookPageValue(bodyPartValues: BookDetails): Result<Boolean>
 
     //get all bodyParts latest value to show in the dashboard screen
-    fun getAllBodyPartLatestValue(): Flow<List<BodyPart>>
+    fun getAllBookPageLatestValue(): Flow<List<Book>>
 }

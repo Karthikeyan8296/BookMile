@@ -1,10 +1,10 @@
 package com.example.precisepal.domain.model
 
-data class BodyPart(
+data class Book(
     val name: String,
     val isActive: Boolean,
     val progress: String,
-    val currentPage: Float? = null,
+    val currentPage: Float? = 0f,
     val bookId: String? = null,
 )
 
@@ -20,86 +20,86 @@ enum class ProgressStatus(
     NOT_STARTED_YET("❌", "Not Started Yet")
 }
 
-val predefinedBodyPart: List<BodyPart> = listOf(
-    BodyPart(
+val predefinedBooks: List<Book> = listOf(
+    Book(
         name = "Atomic Habits",
         isActive = true,
         progress = ProgressStatus.COMPLETED.code,
         currentPage = 320f
     ),
-    BodyPart(
+    Book(
         name = "Deep Work",
         isActive = true,
         progress = ProgressStatus.GOING_WELL.code,
         currentPage = 150f
     ),
-    BodyPart(
+    Book(
         name = "The Lean Startup",
         isActive = true,
         progress = ProgressStatus.PLANNING_TO_READ.code,
         currentPage = 0f
     ),
-    BodyPart(
+    Book(
         name = "Pragmatic Programmer",
         isActive = true,
         progress = ProgressStatus.IN_PROGRESS.code,
         currentPage = 120f
     ),
-    BodyPart(
+    Book(
         name = "Clean Code",
         isActive = true,
         progress = ProgressStatus.IN_PROGRESS.code,
         currentPage = 250f
     ),
-    BodyPart(
+    Book(
         name = "You Don’t Know JS",
         isActive = false,
         progress = ProgressStatus.ARCHIVED.code,
         currentPage = 80f
     ),
-    BodyPart(
+    Book(
         name = "Eloquent JavaScript",
         isActive = true,
         progress = ProgressStatus.NOT_STARTED_YET.code,
         currentPage = 0f
     ),
-    BodyPart(
+    Book(
         name = "The Psychology of Money",
         isActive = true,
         progress = ProgressStatus.COMPLETED.code,
         currentPage = 210f
     ),
-    BodyPart(
+    Book(
         name = "Rich Dad Poor Dad",
         isActive = true,
         progress = ProgressStatus.GOING_WELL.code,
         currentPage = 160f
     ),
-    BodyPart(
+    Book(
         name = "Zero to One",
         isActive = true,
         progress = ProgressStatus.PLANNING_TO_READ.code,
         currentPage = 0f
     ),
-    BodyPart(
+    Book(
         name = "Cracking the Coding Interview",
         isActive = true,
         progress = ProgressStatus.IN_PROGRESS.code,
         currentPage = 300f
     ),
-    BodyPart(
+    Book(
         name = "The Art of Computer Programming",
         isActive = false,
         progress = ProgressStatus.ARCHIVED.code,
         currentPage = 100f
     ),
-    BodyPart(
+    Book(
         name = "Refactoring",
         isActive = true,
         progress = ProgressStatus.NOT_STARTED_YET.code,
         currentPage = 0f
     ),
-    BodyPart(
+    Book(
         name = "Soft Skills: The IT Life Manual",
         isActive = true,
         progress = ProgressStatus.COMPLETED.code,

@@ -59,7 +59,7 @@ fun ProfileBottomSheet(
                     color = Color.Black
                 )
                 Text(
-                    text = if (userInstance == null || userInstance.isAnonymous) "anonymous@measuremate.io" else userInstance.email,
+                    text = if (userInstance == null || userInstance.isAnonymous) "anonymous@BookMile.io" else userInstance.email,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Black
                 )

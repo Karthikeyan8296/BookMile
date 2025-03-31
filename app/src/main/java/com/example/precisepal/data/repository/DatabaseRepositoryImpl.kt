@@ -1,20 +1,20 @@
 package com.example.precisepal.data.repository
 
-import com.example.precisepal.data.mapper.BodyPartDTO
-import com.example.precisepal.data.mapper.BodyPartValueDTO
+import com.example.precisepal.data.mapper.BookDTO
+import com.example.precisepal.data.mapper.BookDetailsDTO
 import com.example.precisepal.data.mapper.UserDTO
-import com.example.precisepal.data.mapper.toBodyPart
-import com.example.precisepal.data.mapper.toBodyPartDTO
+import com.example.precisepal.data.mapper.toBook
+import com.example.precisepal.data.mapper.toBookDTO
 import com.example.precisepal.data.mapper.toBodyPartValueDTO
 import com.example.precisepal.data.mapper.toBodyPartValues
 import com.example.precisepal.data.mapper.toUser
-import com.example.precisepal.data.util.constants.BODY_PART_COLLECTION
-import com.example.precisepal.data.util.constants.BODY_PART_NAME_FIELD
-import com.example.precisepal.data.util.constants.BODY_PART_VALUES_COLLECTION
-import com.example.precisepal.data.util.constants.BODY_PART_VALUE_DATE_FIELD
+import com.example.precisepal.data.util.constants.BOOK_COLLECTION
+import com.example.precisepal.data.util.constants.BOOK_NAME_FIELD
+import com.example.precisepal.data.util.constants.BOOK_DETAIL_COLLECTION
+import com.example.precisepal.data.util.constants.BOOK_DETAIL_DATE_FIELD
 import com.example.precisepal.data.util.constants.USERS_COLLECTION
-import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.Book
+import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.domain.model.User
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -38,25 +38,25 @@ class DatabaseRepositoryImpl(
     }
 
     //firebase body part collection - creating an collection named "bodyPart"
-    private fun bodyPartCollection(
+    private fun bookCollection(
         userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
     ): CollectionReference {
         return firebaseFireStore.collection(USERS_COLLECTION)
             .document(userID)
-            .collection(BODY_PART_COLLECTION)
+            .collection(BOOK_COLLECTION)
     }
 
     //firebase body part value collection - creating an collection named "bodyPartValue"
-    private fun bodyPartValueCollection(
-        bodyPartID: String,
+    private fun bookDetailCollection(
+        bookID: String,
         userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
     ): CollectionReference {
         return firebaseFireStore
             .collection(USERS_COLLECTION)
             .document(userID)
-            .collection(BODY_PART_COLLECTION)
-            .document(bodyPartID)
-            .collection(BODY_PART_VALUES_COLLECTION)
+            .collection(BOOK_COLLECTION)
+            .document(bookID)
+            .collection(BOOK_DETAIL_COLLECTION)
     }
 
     //storing the user in the database
@@ -108,13 +108,13 @@ class DatabaseRepositoryImpl(
     }
 
     //insert and update the body part in the database
-    override suspend fun upsertBodyPort(bodyPart: BodyPart): Result<Boolean> {
+    override suspend fun upsertBook(bodyPart: Book): Result<Boolean> {
         return try {
             //if we edit the existing body part, then it will edit that id only, will not create new one
-            val documentID = bodyPart.bookId ?: bodyPartCollection().document().id
+            val documentID = bodyPart.bookId ?: bookCollection().document().id
             //we are setting the bodypart id to the bodypartDTO as Document ID
-            val bodyPartDTO = bodyPart.toBodyPartDTO().copy(bodyPartId = documentID)
-            bodyPartCollection()
+            val bodyPartDTO = bodyPart.toBookDTO().copy(bodyPartId = documentID)
+            bookCollection()
                 .document(documentID)
                 .set(bodyPartDTO)
                 .await()
@@ -126,15 +126,15 @@ class DatabaseRepositoryImpl(
     }
 
     //get the bodyParts from the DB
-    override fun getAllBodyParts(): Flow<List<BodyPart>> {
+    override fun getAllBooks(): Flow<List<Book>> {
         return flow {
             try {
-                bodyPartCollection()
-                    .orderBy(BODY_PART_NAME_FIELD)
+                bookCollection()
+                    .orderBy(BOOK_NAME_FIELD)
                     .snapshots()
                     .collect { snapshot ->
-                        val bodyPartDTOList = snapshot.toObjects(BodyPartDTO::class.java)
-                        emit(bodyPartDTOList.map { it.toBodyPart() })
+                        val bodyPartDTOList = snapshot.toObjects(BookDTO::class.java)
+                        emit(bodyPartDTOList.map { it.toBook() })
                         // Debugging: Log sorted names
 //                        Log.d("Firestore", "Fetched and sorted body parts:")
 //                        bodyPartDTOList.forEach { Log.d("Firestore", "BodyPart: ${it.name}") }
@@ -151,15 +151,15 @@ class DatabaseRepositoryImpl(
     }
 
     //get the specific bodyPart for details screen
-    override fun getBodyPart(bodyPartId: String): Flow<BodyPart?> {
+    override fun getBook(bodyPartId: String): Flow<Book?> {
         return flow {
             try {
-                bodyPartCollection()
+                bookCollection()
                     .document(bodyPartId)
                     .snapshots()
                     .collect { snapshot ->
-                        val bodyPartDTO = snapshot.toObject(BodyPartDTO::class.java)
-                        emit(bodyPartDTO?.toBodyPart())
+                        val bookDTO = snapshot.toObject(BookDTO::class.java)
+                        emit(bookDTO?.toBook())
                     }
             } catch (e: Exception) {
                 throw e
@@ -168,9 +168,9 @@ class DatabaseRepositoryImpl(
     }
 
     //delete the body part from details screen
-    override suspend fun deleteBodyPart(bodyPartID: String): Result<Boolean> {
+    override suspend fun deleteBook(bodyPartID: String): Result<Boolean> {
         return try {
-            bodyPartCollection()
+            bookCollection()
                 .document(bodyPartID)
                 .delete()
                 .await()
@@ -181,13 +181,13 @@ class DatabaseRepositoryImpl(
     }
 
     //update and insert the body part values
-    override suspend fun upsertBodyPartValues(bodyPartValues: BodyPartValues): Result<Boolean> {
+    override suspend fun upsertBookPageValues(bodyPartValues: BookDetails): Result<Boolean> {
         return try {
             val bodyPartValueCollection =
-                bodyPartValueCollection(bodyPartValues.bodyPartId.orEmpty())
-            val documentID = bodyPartValues.bodyPartValueID ?: bodyPartValueCollection.document().id
+                bookDetailCollection(bodyPartValues.bookId.orEmpty())
+            val documentID = bodyPartValues.bookPagesID ?: bodyPartValueCollection.document().id
             val bodyPartValueDTO =
-                bodyPartValues.toBodyPartValueDTO().copy(bodyPartValueID = documentID)
+                bodyPartValues.toBodyPartValueDTO().copy(bookPagesID = documentID)
             bodyPartValueCollection
                 .document(documentID)
                 .set(bodyPartValueDTO)
@@ -199,15 +199,15 @@ class DatabaseRepositoryImpl(
     }
 
     //get the bodyPartValues from the firestore
-    override fun getAllBodyPartValues(bodyPartId: String): Flow<List<BodyPartValues>> {
+    override fun getAllBookPageValues(bodyPartId: String): Flow<List<BookDetails>> {
         return flow {
             try {
-                bodyPartValueCollection(bodyPartId)
-                    .orderBy(BODY_PART_VALUE_DATE_FIELD, Query.Direction.DESCENDING)
+                bookDetailCollection(bodyPartId)
+                    .orderBy(BOOK_DETAIL_DATE_FIELD, Query.Direction.DESCENDING)
                     .snapshots()
                     .collect { snapshot ->
-                        val bodyPartValueDTOList = snapshot.toObjects(BodyPartValueDTO::class.java)
-                        emit(bodyPartValueDTOList.map { it.toBodyPartValues() })
+                        val bookDetailsDTOList = snapshot.toObjects(BookDetailsDTO::class.java)
+                        emit(bookDetailsDTOList.map { it.toBodyPartValues() })
                     }
             } catch (e: Exception) {
                 throw e
@@ -216,10 +216,10 @@ class DatabaseRepositoryImpl(
     }
 
     //delete bodyPart value
-    override suspend fun deleteBodyPartValue(bodyPartValues: BodyPartValues): Result<Boolean> {
+    override suspend fun deleteBookPageValue(bodyPartValues: BookDetails): Result<Boolean> {
         return try {
-            bodyPartValueCollection(bodyPartValues.bodyPartId.orEmpty())
-                .document(bodyPartValues.bodyPartValueID.orEmpty())
+            bookDetailCollection(bodyPartValues.bookId.orEmpty())
+                .document(bodyPartValues.bookPagesID.orEmpty())
                 .delete()
                 .await()
             Result.success(true)
@@ -229,19 +229,19 @@ class DatabaseRepositoryImpl(
     }
 
     //get all bodyParts latest value to show in the dashboard screen
-    override fun getAllBodyPartLatestValue(): Flow<List<BodyPart>> {
+    override fun getAllBookPageLatestValue(): Flow<List<Book>> {
         return flow {
             try {
-                bodyPartCollection()
-                    .orderBy(BODY_PART_NAME_FIELD)
+                bookCollection()
+                    .orderBy(BOOK_NAME_FIELD)
                     .snapshots()
                     .collect { snapshot ->
-                        val bodyPartDTOList = snapshot.toObjects(BodyPartDTO::class.java)
+                        val bodyPartDTOList = snapshot.toObjects(BookDTO::class.java)
                         val bodyPart = bodyPartDTOList.mapNotNull { bodyPartDTO ->
                             bodyPartDTO.bodyPartId?.let { bodyPartID ->
                                 val latestBodyPartValue = getLatestBodyPartValue(bodyPartID)
-                                bodyPartDTO.copy(latestValue = latestBodyPartValue?.value ?: 0.0f)
-                                    .toBodyPart()
+                                bodyPartDTO.copy(latestValue = latestBodyPartValue?.value ?: 0f)
+                                    .toBook()
                             }
                         }
                         emit(bodyPart)
@@ -253,12 +253,12 @@ class DatabaseRepositoryImpl(
     }
 
 
-    private suspend fun getLatestBodyPartValue(bodyPartID: String): BodyPartValueDTO? {
-        val querySnapshot = bodyPartValueCollection(bodyPartID)
-            .orderBy(BODY_PART_VALUE_DATE_FIELD, Query.Direction.DESCENDING)
+    private suspend fun getLatestBodyPartValue(bodyPartID: String): BookDetailsDTO? {
+        val querySnapshot = bookDetailCollection(bodyPartID)
+            .orderBy(BOOK_DETAIL_DATE_FIELD, Query.Direction.DESCENDING)
             .limit(1)
             .snapshots()
             .firstOrNull()
-        return querySnapshot?.documents?.firstOrNull()?.toObject(BodyPartValueDTO::class.java)
+        return querySnapshot?.documents?.firstOrNull()?.toObject(BookDetailsDTO::class.java)
     }
 }

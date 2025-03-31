@@ -64,12 +64,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.Book
+import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.domain.model.TimeRange
 import com.example.precisepal.presentation.components.LineGraph
 import com.example.precisepal.presentation.components.BookMileDialog
-import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
+import com.example.precisepal.presentation.components.ProgressBottomSheet
 import com.example.precisepal.presentation.components.NewValueInputBar
 import com.example.precisepal.presentation.components.datePicker
 import com.example.precisepal.presentation.theme.InterFontFamily
@@ -106,7 +106,7 @@ fun DetailsScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        onEvent(DetailsEvent.RestoreBodyPart)
+                        onEvent(DetailsEvent.RestoreBook)
                     }
                 }
 
@@ -127,7 +127,7 @@ fun DetailsScreen(
         onDismiss = { isDeleteDialogOpen = false },
         onConfirm = {
             isDeleteDialogOpen = false
-            onEvent(DetailsEvent.DeleteBodyPart)
+            onEvent(DetailsEvent.DeleteBook)
         },
         title = "Delete Book",
         body = { Text("Are you sure you want to delete this book? This action cannot be undone.") },
@@ -140,7 +140,7 @@ fun DetailsScreen(
     }
     val preBuildSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    MeasureUnitBottomSheet(
+    ProgressBottomSheet(
         preBuildSheetState = preBuildSheetState,
         isOpen = isBottomSheetOpen,
         onDismiss = { isBottomSheetOpen = false },
@@ -151,7 +151,7 @@ fun DetailsScreen(
                     isBottomSheetOpen = false
                 }
             }
-            onEvent(DetailsEvent.ChangeMeasuringUnit(measuringUnit))
+            onEvent(DetailsEvent.ChangeProgress(measuringUnit))
         }
     )
 
@@ -223,7 +223,7 @@ fun DetailsScreen(
                         onDeleteIconClick = { isDeleteDialogOpen = true },
                         onBackIconClick = onBackClickInstance,
                         onUnitIconClick = { isBottomSheetOpen = true },
-                        bodyPartInstance = state.bodyPart
+                        bodyPartInstance = state.bookName
                     )
                     //toggle button component
                     ChartTimeRangeButton(
@@ -237,13 +237,13 @@ fun DetailsScreen(
                             .fillMaxWidth()
                             .aspectRatio(ratio = 2 / 1f)
                             .padding(16.dp),
-                        bodyPartValueInstance = state.chartBodyPartValues
+                        bodyPartValueInstance = state.graphBookPageValues
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     HistorySection(
-                        bodyPartInstance = state.allBodyPartValues,
-                        onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
-                        measuringUnitCode = state.bodyPart?.progress
+                        bodyPartInstance = state.allBookPageValues,
+                        onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
+                        measuringUnitCode = state.bookName?.progress
                     )
                 }
 
@@ -258,7 +258,7 @@ fun DetailsScreen(
                     date = state.date.changeLocalDateToFullDate(),
                     onDoneClick = {
                         focusManager.clearFocus()
-                        onEvent(DetailsEvent.AddNewValue)
+                        onEvent(DetailsEvent.AddNewPage)
                     },
                     onValueChange = { onEvent(DetailsEvent.OnTextFieldValueChange(it)) },
                     onCalenderIconClick = { isDatePickerOpen = true },
@@ -290,7 +290,7 @@ fun DetailsScreen(
                     onDeleteIconClick = { isDeleteDialogOpen = true },
                     onBackIconClick = onBackClickInstance,
                     onUnitIconClick = { isBottomSheetOpen = true },
-                    bodyPartInstance = state.bodyPart
+                    bodyPartInstance = state.bookName
                 )
                 Row(modifier = modifier.fillMaxSize()) {
                     Column(
@@ -312,7 +312,7 @@ fun DetailsScreen(
                                 .fillMaxWidth()
                                 .aspectRatio(ratio = 2 / 1f)
                                 .padding(16.dp),
-                            bodyPartValueInstance = state.chartBodyPartValues
+                            bodyPartValueInstance = state.graphBookPageValues
                         )
                     }
                     Box(
@@ -321,9 +321,9 @@ fun DetailsScreen(
                             .weight(1f),
                     ) {
                         HistorySection(
-                            bodyPartInstance = state.allBodyPartValues,
-                            onDeleteIconClick = { onEvent(DetailsEvent.DeleteBodyPartValue(it)) },
-                            measuringUnitCode = state.bodyPart?.progress
+                            bodyPartInstance = state.allBookPageValues,
+                            onDeleteIconClick = { onEvent(DetailsEvent.DeleteBookPageValue(it)) },
+                            measuringUnitCode = state.bookName?.progress
                         )
                         //input field
                         NewValueInputBar(
@@ -335,7 +335,7 @@ fun DetailsScreen(
                             date = state.date.changeLocalDateToFullDate(),
                             onDoneClick = {
                                 focusManager.clearFocus()
-                                onEvent(DetailsEvent.AddNewValue)
+                                onEvent(DetailsEvent.AddNewPage)
                             },
                             onValueChange = { onEvent(DetailsEvent.OnTextFieldValueChange(it)) },
                             onCalenderIconClick = { isDatePickerOpen = true },
@@ -362,16 +362,7 @@ fun DetailsScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 val dummyList = listOf(
-    BodyPartValues(value = 71.5f, date = LocalDate.of(2023, 7, 1)),
-    BodyPartValues(value = 72.3f, date = LocalDate.of(2023, 7, 2)),
-    BodyPartValues(value = 70.8f, date = LocalDate.of(2023, 7, 3)),
-    BodyPartValues(value = 69.4f, date = LocalDate.of(2023, 8, 4)),
-    BodyPartValues(value = 68.9f, date = LocalDate.of(2023, 8, 5)),
-    BodyPartValues(value = 73.2f, date = LocalDate.of(2023, 9, 6)),
-    BodyPartValues(value = 71.7f, date = LocalDate.of(2023, 9, 7)),
-    BodyPartValues(value = 70.1f, date = LocalDate.of(2023, 9, 8)),
-    BodyPartValues(value = 69.8f, date = LocalDate.of(2023, 10, 9)),
-    BodyPartValues(value = 72.5f, date = LocalDate.of(2023, 10, 10))
+    BookDetails(value = 72f, date = LocalDate.of(2023, 10, 10))
 )
 
 
@@ -382,7 +373,7 @@ fun DetailsTopBar(
     onDeleteIconClick: () -> Unit,
     onBackIconClick: () -> Unit,
     onUnitIconClick: () -> Unit,
-    bodyPartInstance: BodyPart?,
+    bodyPartInstance: Book?,
 ) {
     TopAppBar(
         windowInsets = WindowInsets(0, 0, 0, 0),
@@ -503,9 +494,9 @@ private fun TimeRangeSelectionButton(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun HistorySection(
-    bodyPartInstance: List<BodyPartValues>,
+    bodyPartInstance: List<BookDetails>,
     measuringUnitCode: String?,
-    onDeleteIconClick: (BodyPartValues) -> Unit,
+    onDeleteIconClick: (BookDetails) -> Unit,
 ) {
     LazyColumn {
         //it will take the groups of months
@@ -550,7 +541,7 @@ private fun HistorySection(
 @Composable
 private fun HistoryCard(
     modifier: Modifier = Modifier,
-    bodyPartInstance: BodyPartValues,
+    bodyPartInstance: BookDetails,
     measuringUnitCode: String?,
     onDeleteIconClick: () -> Unit,
 ) {
@@ -592,7 +583,7 @@ private fun HistoryCard(
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = bodyPartInstance.value.toString(),
+                text = bodyPartInstance.value.toInt().toString(),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
                     fontFamily = InterFontFamily,

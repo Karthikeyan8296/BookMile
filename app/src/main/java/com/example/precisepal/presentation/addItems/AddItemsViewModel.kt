@@ -2,7 +2,7 @@ package com.example.precisepal.presentation.addItems
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.Book
 import com.example.precisepal.domain.model.ProgressStatus
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
@@ -34,13 +34,13 @@ class AddItemsViewModel @Inject constructor(
     private val _state = MutableStateFlow(AddItemsState())
     val state = combine(
         _state,
-        databaseRepository.getAllBodyParts()
+        databaseRepository.getAllBooks()
     ) { state, bodyParts ->
         state.copy(
-            bodyParts = bodyParts
+            books = bodyParts
         )
     }.catch { e ->
-        _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${e.message}"))
+        _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${e.message}"))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -54,8 +54,8 @@ class AddItemsViewModel @Inject constructor(
             is AddItemEvent.OnItemClick -> {
                 _state.update {
                     it.copy(
-                        textFieldValue = event.bodyPart.name,
-                        selectedBodyPart = event.bodyPart
+                        textFieldValue = event.book.name,
+                        selectedBook = event.book
                     )
                 }
             }
@@ -70,46 +70,46 @@ class AddItemsViewModel @Inject constructor(
 
             //save the item
             AddItemEvent.UpsertItem -> {
-                val selectedBodyPart = state.value.selectedBodyPart
+                val selectedBook = state.value.selectedBook
                 upsertBodyPart(
-                    bodyPart = BodyPart(
+                    book = Book(
                         name = state.value.textFieldValue.trim(),
-                        isActive = selectedBodyPart?.isActive ?: true,
-                        progress = selectedBodyPart?.progress
+                        isActive = selectedBook?.isActive ?: true,
+                        progress = selectedBook?.progress
                             ?: ProgressStatus.IN_PROGRESS.code,
-                        bookId = selectedBodyPart?.bookId
+                        bookId = selectedBook?.bookId
                     )
                 )
                 _state.update { it.copy(textFieldValue = "") }
             }
 
             //dismiss
-            AddItemEvent.onAddItemDialogDismiss -> {
+            AddItemEvent.OnAddItemDialogDismiss -> {
                 _state.update {
                     it.copy(
                         textFieldValue = "",
-                        selectedBodyPart = null
+                        selectedBook = null
                     )
                 }
             }
             //TOGGLE BUTTON for active/inactive
-            is AddItemEvent.onItemIsActiveChange -> {
+            is AddItemEvent.OnItemIsActiveChange -> {
                 upsertBodyPart(
-                    bodyPart = event.bodyPart.copy(isActive = !event.bodyPart.isActive)
+                    book = event.book.copy(isActive = !event.book.isActive)
                 )
             }
         }
     }
 
     //adding the bodyPart
-    private fun upsertBodyPart(bodyPart: BodyPart) {
+    private fun upsertBodyPart(book: Book) {
         viewModelScope.launch {
-            databaseRepository.upsertBodyPort(bodyPart)
+            databaseRepository.upsertBook(book)
                 .onSuccess {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Body part added successfully"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Your book has been added successfully!"))
                 }
                 .onFailure {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${it.message}"))
                 }
         }
     }

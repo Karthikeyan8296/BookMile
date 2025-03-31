@@ -1,34 +1,34 @@
 package com.example.precisepal.data.mapper
 
 import android.annotation.SuppressLint
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.BookDetails
 import com.google.firebase.Timestamp
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-data class BodyPartValueDTO(
-    val value: Float = 0.0f,
+data class BookDetailsDTO(
+    val value: Float = 0f,
     val date: Timestamp = Timestamp.now(),
-    val bodyPartId: String? = null,
-    val bodyPartValueID: String? = null,
+    val bookId: String? = null,
+    val bookPagesID: String? = null,
 )
 
-fun BodyPartValueDTO.toBodyPartValues(): BodyPartValues {
-    return BodyPartValues(
+fun BookDetailsDTO.toBodyPartValues(): BookDetails {
+    return BookDetails(
         value = value,
         date = date.toLocalDate(),
-        bodyPartId = bodyPartId,
-        bodyPartValueID = bodyPartValueID,
+        bookId = bookId,
+        bookPagesID = bookPagesID,
     )
 }
 
-fun BodyPartValues.toBodyPartValueDTO(): BodyPartValueDTO {
-    return BodyPartValueDTO(
+fun BookDetails.toBodyPartValueDTO(): BookDetailsDTO {
+    return BookDetailsDTO(
         value = value,
         date = date.toTimestamp(),
-        bodyPartId = bodyPartId,
-        bodyPartValueID = bodyPartValueID,
+        bookId = bookId,
+        bookPagesID = bookPagesID,
     )
 }
 

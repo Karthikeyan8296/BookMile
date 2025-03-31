@@ -1,30 +1,30 @@
 package com.example.precisepal.data.mapper
 
-import com.example.precisepal.domain.model.BodyPart
+import com.example.precisepal.domain.model.Book
 
-data class BodyPartDTO(
+data class BookDTO(
     val name: String = "",
     val active: Boolean = false,
-    val measuringUnit: String = "",
+    val progress: String = "",
     val latestValue: Float? = null,
     val bodyPartId: String? = null,
 )
 
-fun BodyPart.toBodyPartDTO() : BodyPartDTO{
-    return BodyPartDTO(
+fun Book.toBookDTO(): BookDTO {
+    return BookDTO(
         name = name,
         active = isActive,
-        measuringUnit = progress,
+        progress = progress,
         latestValue = currentPage,
         bodyPartId = bookId,
     )
 }
 
-fun BodyPartDTO.toBodyPart() : BodyPart{
-    return BodyPart(
+fun BookDTO.toBook(): Book {
+    return Book(
         name = name,
         isActive = active,
-        progress = measuringUnit,
+        progress = progress,
         currentPage = latestValue,
         bookId = bodyPartId,
     )

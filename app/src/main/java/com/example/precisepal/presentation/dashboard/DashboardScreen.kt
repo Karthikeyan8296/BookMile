@@ -52,8 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.precisepal.R
-import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.predefinedBodyPart
+import com.example.precisepal.domain.model.Book
+import com.example.precisepal.domain.model.predefinedBooks
 import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.components.ProfileBottomSheet
 import com.example.precisepal.presentation.components.ProfilePicPlaceholder
@@ -179,13 +179,13 @@ fun DashboardScreen(
                 //if we are implementing single card at top, we can use item!
                 //item {}
                 //bunch of cards can be defined here, with items!
-                items(state.bodyParts) { bodyPart ->
-                    ItemCard(bodyPartInstance = bodyPart, onCardClick = onItemCardClicked)
+                items(state.books) { bodyPart ->
+                    ItemCard(bookInstance = bodyPart, onCardClick = onItemCardClicked)
                 }
             }
         }
-        LaunchedEffect(state.bodyParts) {
-            Log.d("lazy", "Google signIn error ${state.bodyParts}")
+        LaunchedEffect(state.books) {
+            Log.d("lazy", "Google signIn error ${state.books}")
         }
 
         FloatingActionButton(
@@ -226,13 +226,22 @@ fun DashboardTopBar(
                 )
             }
         },
+        navigationIcon = {
+            IconButton(modifier = Modifier, onClick = ({})) {
+                Image(
+                    painter = painterResource(R.drawable.full_sized_logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
     )
 }
 
 //Body component//
 @Composable
 //the bodyPart is called from the domain
-private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) {
+private fun ItemCard(bookInstance: Book, onCardClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -244,7 +253,7 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
             disabledContentColor = Color.White
         ),
         //if the body part is not null, then we will call this click fun
-        onClick = { bodyPartInstance.bookId?.let { onCardClick(it) } },
+        onClick = { bookInstance.bookId?.let { onCardClick(it) } },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 18.dp),
@@ -264,7 +273,7 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
             }
             Spacer(modifier = Modifier.size(12.dp))
             Text(
-                text = bodyPartInstance.name,
+                text = bookInstance.name,
                 //to make sure if the text is too long it doesn't crash the app
                 modifier = Modifier.weight(8f),
                 maxLines = 1,
@@ -280,7 +289,9 @@ private fun ItemCard(bodyPartInstance: BodyPart, onCardClick: (String) -> Unit) 
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    "${bodyPartInstance.currentPage ?: ""} ${bodyPartInstance.progress}",
+                    "${
+                        bookInstance.currentPage?.toInt().toString()
+                    } ${bookInstance.progress}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Box(
@@ -312,7 +323,7 @@ fun DashboardScreenPreview() {
             snackbarHostStateInstanceScreen = SnackbarHostState(),
             uiEvent = flowOf(),
             onEvent = {},
-            state = DashboardState(bodyParts = predefinedBodyPart)
+            state = DashboardState(books = predefinedBooks)
         )
     }
 }

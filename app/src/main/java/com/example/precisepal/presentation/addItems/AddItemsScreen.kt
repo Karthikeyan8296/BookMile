@@ -26,7 +26,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -43,10 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
-import com.example.precisepal.domain.model.predefinedBodyPart
+import com.example.precisepal.domain.model.predefinedBooks
 import com.example.precisepal.presentation.components.AddBookDialog
-import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
@@ -113,7 +110,7 @@ fun AddItemsScreen(
         isOpen = isDialogAdd,
         onDismiss = {
             isDialogAdd = false
-            onEvent(AddItemEvent.onAddItemDialogDismiss)
+            onEvent(AddItemEvent.OnAddItemDialogDismiss)
         },
         onConfirm = {
             isDialogAdd = false
@@ -143,7 +140,7 @@ fun AddItemsScreen(
             //if we are implementing single card at top, we can use item!
             //item {}
             //bunch of cards can be defined here, with items!
-            items(state.bodyParts) { bodyPart ->
+            items(state.books) { bodyPart ->
                 ItemCard(
                     name = bodyPart.name,
                     onClick = {
@@ -151,7 +148,7 @@ fun AddItemsScreen(
                         onEvent(AddItemEvent.OnItemClick(bodyPart))
                     },
                     isChecked = bodyPart.isActive,
-                    onCheckChange = { onEvent(AddItemEvent.onItemIsActiveChange(bodyPart)) },
+                    onCheckChange = { onEvent(AddItemEvent.OnItemIsActiveChange(bodyPart)) },
                 )
             }
         }
@@ -237,7 +234,7 @@ private fun AddItemsScreenPreview() {
         onBackClickInstance = {},
         paddingValuesInstance = PaddingValues(0.dp),
         snackbarHostStateInstanceScreen = SnackbarHostState(),
-        state = AddItemsState(bodyParts = predefinedBodyPart),
+        state = AddItemsState(books = predefinedBooks),
         uiEvent = flowOf(),
         onEvent = {}
     )

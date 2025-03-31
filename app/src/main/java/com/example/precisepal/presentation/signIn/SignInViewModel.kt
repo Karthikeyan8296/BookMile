@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.precisepal.domain.model.AuthStatus
-import com.example.precisepal.domain.model.predefinedBodyPart
+import com.example.precisepal.domain.model.predefinedBooks
 import com.example.precisepal.domain.repository.AuthRepository
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
@@ -72,15 +72,15 @@ class SignInViewModel @Inject constructor(
                     //Adding the Anonymous user in the database
                     databaseRepository.addUser()
                         .onSuccess {
-                            _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
+                            _uiEvent.send(UIEvent.ShowSnackBar("✅ Sign-in successful!"))
                         }
                         .onFailure { e ->
-                            _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
+                            _uiEvent.send(UIEvent.ShowSnackBar("❌ User registration failed. Please try again ${e.message}"))
                         }
-                    _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Sign-in successful!"))
                 }
                 .onFailure { e ->
-                    _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign in. please try again later ${e.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Couldn't sign in. please try again later ${e.message}"))
                 }
             _state.update { it.copy(isAnonymousSignInButtonLoading = false) }
         }
@@ -99,21 +99,21 @@ class SignInViewModel @Inject constructor(
                                 //inserting the predefined values in the DB
                                 try {
                                     insertPredefinedBodyPartValues()
-                                    _uiEvent.send(UIEvent.ShowSnackBar("Predefined Body Part Values Inserted Successfully"))
+                                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Predefined Book added successfully!"))
                                 } catch (e: Exception) {
-                                    _uiEvent.send(UIEvent.ShowSnackBar("failed to insert in DB ${e.message}"))
+                                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Failed to add book. Please try again later ${e.message}"))
                                 }
-                                _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
+                                _uiEvent.send(UIEvent.ShowSnackBar("✅ Sign-in successful!"))
                             }
                             .onFailure { e ->
-                                _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
+                                _uiEvent.send(UIEvent.ShowSnackBar("❌ User registration failed. Please try again.${e.message}"))
                             }
                     } else {
-                        _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data already stored in the database"))
+                        _uiEvent.send(UIEvent.ShowSnackBar("✅ You're signed in! Your already an user."))
                     }
                 }
                 .onFailure { e ->
-                    _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign in. please try again later ${e.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Sign-in failed. Please try again later. ${e.message}"))
                     Log.d("SignInViewModel", "Google signIn error: ${e.message}")
                 }
             _state.update { it.copy(isGoogleSignInButtonLoading = false) }
@@ -121,8 +121,8 @@ class SignInViewModel @Inject constructor(
     }
 
     private suspend fun insertPredefinedBodyPartValues() {
-        predefinedBodyPart.forEach { bodyPart ->
-            databaseRepository.upsertBodyPort(bodyPart)
+        predefinedBooks.forEach { bodyPart ->
+            databaseRepository.upsertBook(bodyPart)
         }
     }
 }

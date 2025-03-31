@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -75,9 +76,9 @@ fun SignInScreen(
             onEvent(SignInEvent.SignInAnonymously)
             isDialogOpen = false
         },
-        title = "welcome back",
-        body = { Text("yah my body") },
-        confirmButtonText = "Yes",
+        title = "Continue as Guest",
+        body = { Text("You can continue as a guest, but your data will be lost when you sign out.") },
+        confirmButtonText = "Continue",
         dismissButtonText = "Cancel"
     )
 
@@ -94,13 +95,24 @@ fun SignInScreen(
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Text(
-                    text = "BookMile",
-                    fontFamily = InterFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 24.sp,
-                    color = Color(0xFF5863BD),
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.full_sized_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "BookMile",
+                        fontFamily = InterFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 24.sp,
+                        color = Color(0xFF5863BD),
+                    )
+                }
 
                 Image(
                     painter = painterResource(id = R.drawable.intro),
@@ -122,7 +134,7 @@ fun SignInScreen(
                             Text(
                                 text = "Read, Track, Achieve.",
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,
+                                color = Color(0xFF5863BD),
                                 fontSize = 28.sp,
                                 letterSpacing = 0.5.sp,
                                 fontFamily = InterFontFamily,
@@ -204,7 +216,7 @@ fun SignInScreen(
                         Text(
                             text = "Read, Track, Achieve.",
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black,
+                            color = Color(0xFF5863BD),
                             fontSize = 28.sp,
                             letterSpacing = 0.5.sp,
                             fontFamily = InterFontFamily,

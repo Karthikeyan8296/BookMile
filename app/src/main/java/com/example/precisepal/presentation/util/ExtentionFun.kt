@@ -12,7 +12,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 fun Float.roundToDecimal(decimalPlace: Int = 1): Float {
-    var multiplier = 10.0.pow(decimalPlace)
+    val multiplier = 10.0.pow(decimalPlace)
     return (this * multiplier).roundToInt() / multiplier.toFloat()
 }
 
@@ -79,4 +79,8 @@ fun String.toFloatValue(decimalPlace: Int = 1): Float {
     val multiplier = 10.0.pow(decimalPlace)
     val value = this.toFloatOrNull() ?: 0f
     return (value * multiplier).roundToInt() / multiplier.toFloat()
+}
+
+fun String.toIntValue(): Int {
+    return this.toFloatOrNull()?.roundToInt() ?: 0
 }

@@ -6,8 +6,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.example.precisepal.domain.model.BodyPart
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.Book
+import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.domain.model.TimeRange
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.navigation.Routes
@@ -47,8 +47,8 @@ class DetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(DetailsState())
     val state = combine(
         _state,
-        databaseRepository.getBodyPart(bodyPartID),
-        databaseRepository.getAllBodyPartValues(bodyPartID)
+        databaseRepository.getBook(bodyPartID),
+        databaseRepository.getAllBookPageValues(bodyPartID)
     ) { state, bodyPart, bodyPartValues ->
         val currentDate = LocalDate.now()
         val last7DaysValues = bodyPartValues.filter { bodyPartValue ->
@@ -58,16 +58,16 @@ class DetailsViewModel @Inject constructor(
             bodyPartValue.date.isAfter(currentDate.minusDays(30))
         }
         state.copy(
-            bodyPart = bodyPart,
-            allBodyPartValues = bodyPartValues,
-            chartBodyPartValues = when (state.timeRange) {
+            bookName = bodyPart,
+            allBookPageValues = bodyPartValues,
+            graphBookPageValues = when (state.timeRange) {
                 TimeRange.LAST_7_DAYS -> last7DaysValues
                 TimeRange.LAST_30_DAYS -> last30DaysValues
                 TimeRange.ALL_TIME -> bodyPartValues
             }
         )
     }.catch { e ->
-        _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${e.message}"))
+        _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${e.message}"))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -77,38 +77,38 @@ class DetailsViewModel @Inject constructor(
     //Events
     fun onEvent(event: DetailsEvent) {
         when (event) {
-            DetailsEvent.AddNewValue -> {
+            DetailsEvent.AddNewPage -> {
                 val state = state.value
-                val id = state.allBodyPartValues.find { it.date == state.date }?.bodyPartValueID
-                val bodyPartValues = BodyPartValues(
+                val id = state.allBookPageValues.find { it.date == state.date }?.bookPagesID
+                val bodyPartValues = BookDetails(
                     value = state.textFieldValue.toFloatValue(decimalPlace = 2),
                     date = state.date,
-                    bodyPartId = bodyPartID,
-                    bodyPartValueID = id
+                    bookId = bodyPartID,
+                    bookPagesID = id
                 )
                 upsertBodyPartValue(bodyPartValues)
                 _state.update { it.copy(textFieldValue = "") }
             }
 
-            DetailsEvent.DeleteBodyPart -> {
+            DetailsEvent.DeleteBook -> {
                 deleteBodyPart()
             }
 
-            DetailsEvent.RestoreBodyPart -> {
-                upsertBodyPartValue(state.value.recentlyDeletedBodyPart)
-                _state.update { it.copy(recentlyDeletedBodyPart = null) }
+            DetailsEvent.RestoreBook -> {
+                upsertBodyPartValue(state.value.recentlyDeletedBook)
+                _state.update { it.copy(recentlyDeletedBook = null) }
             }
 
-            is DetailsEvent.ChangeMeasuringUnit -> {
-                val bodyPart = state.value.bodyPart?.copy(
-                    progress = event.measuringUnit.code
+            is DetailsEvent.ChangeProgress -> {
+                val bodyPart = state.value.bookName?.copy(
+                    progress = event.progressStatus.code
                 )
                 changeMeasuringUnit(bodyPart = bodyPart)
             }
 
-            is DetailsEvent.DeleteBodyPartValue -> {
-                deleteBodyPartValue(event.bodyPartValues)
-                _state.update { it.copy(recentlyDeletedBodyPart = event.bodyPartValues) }
+            is DetailsEvent.DeleteBookPageValue -> {
+                deleteBodyPartValue(event.bookPageValue)
+                _state.update { it.copy(recentlyDeletedBook = event.bookPageValue) }
             }
 
             is DetailsEvent.OnDateChange -> {
@@ -132,15 +132,15 @@ class DetailsViewModel @Inject constructor(
     }
 
     //inserting and updating the measuring unit
-    private fun changeMeasuringUnit(bodyPart: BodyPart?) {
+    private fun changeMeasuringUnit(bodyPart: Book?) {
         viewModelScope.launch {
             bodyPart ?: return@launch
-            databaseRepository.upsertBodyPort(bodyPart)
+            databaseRepository.upsertBook(bodyPart)
                 .onSuccess {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Measuring Unit updated!"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Your reading progress has been updated!"))
                 }
                 .onFailure {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${it.message}"))
                 }
         }
     }
@@ -148,43 +148,43 @@ class DetailsViewModel @Inject constructor(
     //delete the body part
     private fun deleteBodyPart() {
         viewModelScope.launch {
-            databaseRepository.deleteBodyPart(bodyPartID)
+            databaseRepository.deleteBook(bodyPartID)
                 .onSuccess {
                     _uiEvent.send(UIEvent.NavigateBack)
-                    _uiEvent.send(UIEvent.ShowSnackBar("Deleted successfully!"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Book deleted successfully!"))
                 }
                 .onFailure {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${it.message}"))
                 }
         }
     }
 
-    private fun upsertBodyPartValue(bodyPartValues: BodyPartValues?) {
+    private fun upsertBodyPartValue(bodyPartValues: BookDetails?) {
         viewModelScope.launch {
             bodyPartValues ?: return@launch
-            databaseRepository.upsertBodyPartValues(bodyPartValues)
+            databaseRepository.upsertBookPageValues(bodyPartValues)
                 .onSuccess {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Body Part Value saved!"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Your progress is saved! Keep up the great reading!"))
                 }
                 .onFailure {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${it.message}"))
                 }
         }
     }
 
-    private fun deleteBodyPartValue(bodyPartValues: BodyPartValues) {
+    private fun deleteBodyPartValue(bookDetails: BookDetails) {
         viewModelScope.launch {
-            databaseRepository.deleteBodyPartValue(bodyPartValues)
+            databaseRepository.deleteBookPageValue(bookDetails)
                 .onSuccess {
                     _uiEvent.send(
                         UIEvent.ShowSnackBar(
-                            "Body Part Value deleted!",
+                            "✅ The pages you read have been deleted.",
                             actionLabel = "Undo"
                         )
                     )
                 }
                 .onFailure {
-                    _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${it.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${it.message}"))
                 }
         }
     }

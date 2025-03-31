@@ -28,7 +28,7 @@ import com.example.precisepal.presentation.theme.InterFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeasureUnitBottomSheet(
+fun ProgressBottomSheet(
     onDismiss: () -> Unit,
     isOpen: Boolean,
     preBuildSheetState: SheetState,

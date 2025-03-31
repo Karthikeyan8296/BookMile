@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.precisepal.domain.repository.AuthRepository
 import com.example.precisepal.domain.repository.DatabaseRepository
 import com.example.precisepal.presentation.util.UIEvent
@@ -50,15 +49,15 @@ class DashboardViewModel @Inject constructor(
     val state = combine(
         _state,
         databaseRepository.getSignInUserName(),
-        databaseRepository.getAllBodyPartLatestValue()
+        databaseRepository.getAllBookPageLatestValue()
     ) { state, user, bodyParts ->
         val activeBodyParts = bodyParts.filter { it.isActive }
         state.copy(
             user = user,
-            bodyParts = activeBodyParts
+            books = activeBodyParts
         )
     }.catch { e ->
-        _uiEvent.send(UIEvent.ShowSnackBar("Something went wrong. please try again later ${e.message}"))
+        _uiEvent.send(UIEvent.ShowSnackBar("❌ Oops! Something went wrong. Please try again later. ${e.message}"))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -71,11 +70,11 @@ class DashboardViewModel @Inject constructor(
             authRepository.signOut()
                 .onSuccess {
                     _uiEvent.send(UIEvent.HideBottomSheet)
-                    _uiEvent.send(UIEvent.ShowSnackBar("Sign Out Successfully"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("✅ Signed out successfully! See you soon."))
                 }
                 .onFailure { e ->
                     _uiEvent.send(UIEvent.HideBottomSheet)
-                    _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign out. please try again later ${e.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Sign-out failed. Please try again later. ${e.message}"))
                 }
             _state.update { it.copy(isSignOutButtonLoading = false) }
         }
@@ -90,16 +89,16 @@ class DashboardViewModel @Inject constructor(
                     databaseRepository.addUser()
                         .onSuccess {
                             _uiEvent.send(UIEvent.HideBottomSheet)
-                            _uiEvent.send(UIEvent.ShowSnackBar("Signed In Successfully, your data stored in the database"))
+                            _uiEvent.send(UIEvent.ShowSnackBar("✅ Sign-in successful!"))
                         }
                         .onFailure { e ->
                             _uiEvent.send(UIEvent.HideBottomSheet)
-                            _uiEvent.send(UIEvent.ShowSnackBar("Couldn't add user${e.message}"))
+                            _uiEvent.send(UIEvent.ShowSnackBar("❌ User registration failed. Please try again later ${e.message}"))
                         }
                 }
                 .onFailure { e ->
                     _uiEvent.send(UIEvent.HideBottomSheet)
-                    _uiEvent.send(UIEvent.ShowSnackBar("Couldn't sign in. please try again later ${e.message}"))
+                    _uiEvent.send(UIEvent.ShowSnackBar("❌ Sign-in failed. Please try again later ${e.message}"))
                     Log.d("SignInViewModel", "Google signIn error: ${e.message}")
                 }
             _state.update { it.copy(isSignInButtonLoading = false) }

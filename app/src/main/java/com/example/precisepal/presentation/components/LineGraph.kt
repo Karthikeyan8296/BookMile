@@ -6,11 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -19,11 +17,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.copy
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.draw
-import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +26,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.precisepal.domain.model.BodyPartValues
+import com.example.precisepal.domain.model.BookDetails
 import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.changeLocalDateToGraphDate
 import com.example.precisepal.presentation.util.roundToDecimal
@@ -41,7 +36,7 @@ import java.time.LocalDate
 @Composable
 fun LineGraph(
     modifier: Modifier,
-    bodyPartValueInstance: List<BodyPartValues>,
+    bodyPartValueInstance: List<BookDetails>,
     pathAndCircleWidth: Float = 5f,
     pathAndCircleColor: Color = Color(0xFF314AF3),
     graphTextColor: Color = Color(0xFF5863BD),
@@ -65,10 +60,10 @@ fun LineGraph(
 
     //from that list we are creating an another value list
     val valuesList = listOf(
-        highestValue.roundToDecimal(),
-        (highestValue - difference).roundToDecimal(),
-        (lowestValue + difference).roundToDecimal(),
-        lowestValue.roundToDecimal()
+        highestValue.roundToDecimal().toInt(),
+        (highestValue - difference).roundToDecimal().toInt(),
+        (lowestValue + difference).roundToDecimal().toInt(),
+        lowestValue.roundToDecimal().toInt()
     )
 
     //taking first to last date values
@@ -113,7 +108,7 @@ fun LineGraph(
             //canvas lines
             drawLine(
                 color = helperLinesColor,
-                strokeWidth = pathAndCircleWidth,
+                strokeWidth = pathAndCircleWidth.toFloat(),
                 start = Offset(
                     x = xPosition + graph10PercentWidth,
                     y = yPosition + graph4PercentHeight
@@ -143,7 +138,7 @@ fun LineGraph(
             points.forEach { point ->
                 drawCircle(
                     color = pathAndCircleColor,
-                    radius = pathAndCircleWidth,
+                    radius = pathAndCircleWidth.toFloat(),
                     center = point
                 )
             }
@@ -239,16 +234,16 @@ private fun createFilledPath(path: Path, graphHeight: Float, graphWith: Float): 
 @Composable
 private fun LineGraphPreview() {
     val dummyList = listOf(
-        BodyPartValues(value = 71.5f, date = LocalDate.of(2023, 7, 1)),
-        BodyPartValues(value = 72.3f, date = LocalDate.of(2023, 7, 2)),
-        BodyPartValues(value = 70.8f, date = LocalDate.of(2023, 7, 3)),
-        BodyPartValues(value = 69.4f, date = LocalDate.of(2023, 7, 4)),
-        BodyPartValues(value = 68.9f, date = LocalDate.of(2023, 7, 5)),
-        BodyPartValues(value = 73.2f, date = LocalDate.of(2023, 7, 6)),
-        BodyPartValues(value = 71.7f, date = LocalDate.of(2023, 7, 7)),
-        BodyPartValues(value = 70.1f, date = LocalDate.of(2023, 7, 8)),
-        BodyPartValues(value = 69.8f, date = LocalDate.of(2023, 7, 9)),
-        BodyPartValues(value = 72.5f, date = LocalDate.of(2023, 7, 10))
+//        BodyPartValues(value = 71, date = LocalDate.of(2023, 7, 1)),
+//        BodyPartValues(value = 72, date = LocalDate.of(2023, 7, 2)),
+//        BodyPartValues(value = 70, date = LocalDate.of(2023, 7, 3)),
+//        BodyPartValues(value = 69, date = LocalDate.of(2023, 7, 4)),
+//        BodyPartValues(value = 68, date = LocalDate.of(2023, 7, 5)),
+//        BodyPartValues(value = 73, date = LocalDate.of(2023, 7, 6)),
+//        BodyPartValues(value = 71, date = LocalDate.of(2023, 7, 7)),
+//        BodyPartValues(value = 70, date = LocalDate.of(2023, 7, 8)),
+//        BodyPartValues(value = 69, date = LocalDate.of(2023, 7, 9)),
+        BookDetails(value = 72f, date = LocalDate.of(2023, 7, 10))
     )
     LineGraph(
         modifier = Modifier
