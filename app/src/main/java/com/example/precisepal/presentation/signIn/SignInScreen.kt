@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.precisepal.R
 import com.example.precisepal.presentation.components.AnonymouslySignInButton
 import com.example.precisepal.presentation.components.GoogleSignInButton
-import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
@@ -67,7 +67,7 @@ fun SignInScreen(
         mutableStateOf(false)
     }
 
-    MeasureMateDialog(
+    BookMileDialog(
         isOpen = isDialogOpen,
         onDismiss = { isDialogOpen = false },
         //connecting the events

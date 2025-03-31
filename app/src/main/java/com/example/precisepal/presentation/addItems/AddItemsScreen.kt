@@ -2,7 +2,6 @@ package com.example.precisepal.presentation.addItems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,20 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,8 +26,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,22 +37,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.precisepal.domain.model.BodyPart
+import androidx.core.graphics.toColorInt
 import com.example.precisepal.domain.model.predefinedBodyPart
-import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.components.AddBookDialog
+import com.example.precisepal.presentation.components.BookMileDialog
+import com.example.precisepal.presentation.theme.InterFontFamily
 import com.example.precisepal.presentation.util.UIEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -89,13 +81,35 @@ fun AddItemsScreen(
         mutableStateOf(false)
 
     }
-    MeasureMateDialog(
+
+    val value = state.textFieldValue
+    var inputError by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+    inputError = when {
+        value.isBlank() -> "Please enter your book name"
+        else -> null
+    }
+
+    AddBookDialog(
         body = {
-            OutlinedTextField(
-                value = state.textFieldValue,
-                onValueChange = { onEvent(AddItemEvent.OnTextFieldValueChange(it)) })
+            Column(modifier = Modifier) {
+                Text(text = "Manage your collection by adding a new book or updating an existing one.")
+                Spacer(Modifier.size(16.dp))
+                OutlinedTextField(
+                    placeholder = { Text(text = "Log your book") },
+                    value = value,
+                    textStyle = TextStyle(color = Color.Black),
+                    onValueChange = { onEvent(AddItemEvent.OnTextFieldValueChange(it)) },
+                    //error message will show if it has error
+                    isError = inputError != null && value.isNotBlank(),
+                    singleLine = true,
+                    supportingText = { Text(text = inputError.orEmpty(), color = Color.Gray) },
+                )
+            }
         },
-        title = "Add/Update new item",
+        isError = inputError == null,
+        title = "Add or Update Book",
         isOpen = isDialogAdd,
         onDismiss = {
             isDialogAdd = false
@@ -114,7 +128,7 @@ fun AddItemsScreen(
         modifier = Modifier
             .padding(paddingValuesInstance)
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = Color(0xFFF6F6F6))
     ) {
         //TopAppBar
         TopBar(onAddIconClick = { isDialogAdd = true },
@@ -150,14 +164,26 @@ fun AddItemsScreen(
 @Composable
 fun TopBar(onAddIconClick: () -> Unit, onBackIconClick: () -> Unit) {
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFFF6F6F6),
+            titleContentColor = Color(0xFF5863BD),
+            actionIconContentColor = Color.Black,
+            navigationIconContentColor = Color.Black
+        ),
         windowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.fillMaxWidth(),
-        title = { Text("Add new item") },
+        title = {
+            Text(
+                text = "Your Library",
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = InterFontFamily
+            )
+        },
         navigationIcon = {
             IconButton(onClick = { onBackIconClick() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         },
@@ -193,7 +219,7 @@ private fun ItemCard(
                 //to make sure if the text is too long it doesn't crash the app
                 modifier = Modifier.weight(8f),
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )

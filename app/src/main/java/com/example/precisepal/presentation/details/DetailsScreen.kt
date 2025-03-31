@@ -65,14 +65,12 @@ import com.example.precisepal.domain.model.BodyPart
 import com.example.precisepal.domain.model.BodyPartValues
 import com.example.precisepal.domain.model.TimeRange
 import com.example.precisepal.presentation.components.LineGraph
-import com.example.precisepal.presentation.components.MeasureMateDialog
+import com.example.precisepal.presentation.components.BookMileDialog
 import com.example.precisepal.presentation.components.MeasureUnitBottomSheet
 import com.example.precisepal.presentation.components.NewValueInputBar
 import com.example.precisepal.presentation.components.datePicker
 import com.example.precisepal.presentation.util.UIEvent
 import com.example.precisepal.presentation.util.changeLocalDateToFullDate
-import com.example.precisepal.presentation.util.changeLocalDateToGraphDate
-import com.example.precisepal.presentation.util.changeMillisToGraphDate
 import com.example.precisepal.presentation.util.pastOrPresentSelectableDates
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -120,7 +118,7 @@ fun DetailsScreen(
     var isDeleteDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    MeasureMateDialog(
+    BookMileDialog(
         isOpen = isDeleteDialogOpen,
         onDismiss = { isDeleteDialogOpen = false },
         onConfirm = {
