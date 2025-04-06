@@ -37,7 +37,7 @@ class DatabaseRepositoryImpl(
         return firebaseFireStore.collection(USERS_COLLECTION)
     }
 
-    //firebase body part collection - creating an collection named "bodyPart"
+    //firebase book collection - creating an collection named "book"
     private fun bookCollection(
         userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
     ): CollectionReference {
@@ -46,7 +46,7 @@ class DatabaseRepositoryImpl(
             .collection(BOOK_COLLECTION)
     }
 
-    //firebase body part value collection - creating an collection named "bodyPartValue"
+    //firebase book details collection - creating an collection named "bookDetails"
     private fun bookDetailCollection(
         bookID: String,
         userID: String = firebaseAuth.currentUser?.uid.orEmpty(),
@@ -107,7 +107,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //insert and update the body part in the database
+    //insert and update the book in the database
     override suspend fun upsertBook(bodyPart: Book): Result<Boolean> {
         return try {
             //if we edit the existing body part, then it will edit that id only, will not create new one
@@ -125,7 +125,7 @@ class DatabaseRepositoryImpl(
 
     }
 
-    //get the bodyParts from the DB
+    //get the book from the DB
     override fun getAllBooks(): Flow<List<Book>> {
         return flow {
             try {
@@ -150,7 +150,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //get the specific bodyPart for details screen
+    //get the specific book for details screen
     override fun getBook(bodyPartId: String): Flow<Book?> {
         return flow {
             try {
@@ -167,7 +167,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //delete the body part from details screen
+    //delete the book from details screen
     override suspend fun deleteBook(bodyPartID: String): Result<Boolean> {
         return try {
             bookCollection()
@@ -180,7 +180,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //update and insert the body part values
+    //update and insert the book page values
     override suspend fun upsertBookPageValues(bodyPartValues: BookDetails): Result<Boolean> {
         return try {
             val bodyPartValueCollection =
@@ -198,7 +198,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //get the bodyPartValues from the firestore
+    //get the book page values from the firestore
     override fun getAllBookPageValues(bodyPartId: String): Flow<List<BookDetails>> {
         return flow {
             try {
@@ -215,7 +215,7 @@ class DatabaseRepositoryImpl(
         }
     }
 
-    //delete bodyPart value
+    //delete book page value
     override suspend fun deleteBookPageValue(bodyPartValues: BookDetails): Result<Boolean> {
         return try {
             bookDetailCollection(bodyPartValues.bookId.orEmpty())

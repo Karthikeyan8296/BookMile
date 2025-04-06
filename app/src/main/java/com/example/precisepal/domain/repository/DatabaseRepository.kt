@@ -17,27 +17,27 @@ interface DatabaseRepository {
     fun getSignInUserName(): Flow<User?>
 
     //upsert - It is the combination of insert and update
-    //insert and update the body part in the database
+    //insert and update the book  in the database
     suspend fun upsertBook(bodyPart: Book): Result<Boolean>
 
-    //get all bodyParts from the firestore DB
+    //get all Books from the firestore DB
     fun getAllBooks(): Flow<List<Book>>
 
-    //get the bodyPart for the details screen
+    //get the Book for the details screen
     fun getBook(bodyPartId: String): Flow<Book?>
 
-    //delete the body part
+    //delete the book from the firestore DB
     suspend fun deleteBook(bodyPartID: String): Result<Boolean>
 
-    //send body part values to firestore - graph values
+    //send Book details page values to firestore - graph values
     suspend fun upsertBookPageValues(bodyPartValues: BookDetails): Result<Boolean>
 
-    //get all the bodyPart values from the firestore
+    //get all the book page values from the firestore
     fun getAllBookPageValues(bodyPartId: String): Flow<List<BookDetails>>
 
-    //delete bodyPartValue
+    //delete Book page values from the firestore DB
     suspend fun deleteBookPageValue(bodyPartValues: BookDetails): Result<Boolean>
 
-    //get all bodyParts latest value to show in the dashboard screen
+    //get all books page latest value to show in the dashboard screen
     fun getAllBookPageLatestValue(): Flow<List<Book>>
 }

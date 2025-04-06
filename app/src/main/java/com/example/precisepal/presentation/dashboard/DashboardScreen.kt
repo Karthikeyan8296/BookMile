@@ -271,7 +271,7 @@ fun DashboardTopBar(
 
 //Body component//
 @Composable
-//the bodyPart is called from the domain
+//the Book is called from the domain
 private fun ItemCard(bookInstance: Book, onCardClick: (String) -> Unit) {
     Card(
         modifier = Modifier
@@ -321,10 +321,24 @@ private fun ItemCard(bookInstance: Book, onCardClick: (String) -> Unit) {
             ) {
                 Text(
                     "${
-                        bookInstance.currentPage?.toInt().toString()
+                        bookInstance.currentPage?.toInt()
                     } ${bookInstance.progress}",
                     style = MaterialTheme.typography.bodyMedium
                 )
+                //change in the repo impl
+//                if (bookInstance.currentPage != null) {
+//                    Text(
+//                        "${
+//                            bookInstance.currentPage.toInt()
+//                        } ${bookInstance.progress}",
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                } else {
+//                    Text(
+//                        text = bookInstance.progress,
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                }
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)

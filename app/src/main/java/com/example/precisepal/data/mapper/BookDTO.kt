@@ -6,7 +6,7 @@ data class BookDTO(
     val name: String = "",
     val active: Boolean = false,
     val progress: String = "",
-    val latestValue: Float? = 0f,
+    val latestValue: Float? = null,
     val bodyPartId: String? = null,
 )
 

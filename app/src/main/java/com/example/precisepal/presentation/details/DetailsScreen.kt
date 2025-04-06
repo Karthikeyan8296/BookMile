@@ -448,7 +448,7 @@ fun DetailsTopBar(
             containerColor = Color(0xFFF6F6F6),
             titleContentColor = Color(0xFF5863BD),
             navigationIconContentColor = Color.Black,
-            actionIconContentColor = Color.Black
+            actionIconContentColor = Color.Black 
         ),
         title = {
             Text(
@@ -650,6 +650,15 @@ private fun HistoryCard(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = bodyPartInstance.value.toInt().toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = InterFontFamily,
+                    fontSize = 14.sp
+                )
+            )
+            Spacer(modifier = Modifier.width(3.dp))
+            Text(
+                text = "Pages",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
                     fontFamily = InterFontFamily,
